@@ -301,6 +301,9 @@
 	if(bag)
 		to_chat(user, "<span class='notice'>[src] is already loaded with [bag].</span>")
 		return FALSE
+	if(loading)
+		to_chat(user, "<span class='notice'>[src] is already being loaded...</span>")
+		return FALSE
 	if(ammo_type && istype(I, ammo_type))
 		load(I, user)
 
@@ -655,6 +658,7 @@
 	var/loaded = FALSE
 	var/obj/item/ship_weapon/ammunition/naval_artillery/shell = null
 	var/ammo_type = /obj/item/ship_weapon/ammunition/naval_artillery
+	var/loading = FALSE
 	var/load_delay = 8 SECONDS
 
 /obj/machinery/deck_turret/payload_gate/MouseDrop_T(obj/item/A, mob/user)
@@ -663,10 +667,13 @@
 		return FALSE
 	if(get_dist(user, src) > 1)
 		return FALSE
-	if(!ammo_type || !istype(A, ammo_type))
-		return FALSE
 	if(shell)
 		to_chat(user, "<span class='notice'>[src] is already loaded with [shell].</span>")
+		return FALSE
+	if(loading)
+		to_chat(user, "<span class='notice'>[src] is already being loaded...</span>")
+		return FALSE
+	if(!ammo_type || !istype(A, ammo_type))
 		return FALSE
 	if(get_dist(A, src) > 1)
 		load_delay = 10.4 SECONDS
@@ -679,6 +686,7 @@
 	if(!NA.armed)
 		to_chat(user, "<span class='warning'>[A] is not armed!</span>")
 		return FALSE
+	loading = TRUE
 	if(locate(/obj/machinery/deck_turret/autoelevator) in orange(2, src))
 		temp /= 2
 	if(do_after(user, temp, target = src))
@@ -688,6 +696,7 @@
 			shell.forceMove(src)
 			icon_state = "[initial(icon_state)]_loaded"
 			playsound(src.loc, 'nsv13/sound/effects/ship/mac_load.ogg', 100, 1)
+	loading = FALSE
 
 ///Updates state if the moved out obj was the loaded shell
 /obj/machinery/deck_turret/payload_gate/Exited(src)
