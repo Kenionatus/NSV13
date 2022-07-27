@@ -244,7 +244,7 @@ of a specific action goes up, to encourage skynet to go for that one instead.
 @param OM - If you want this score to be affected by the stats of an overmap.
 */
 /datum/ai_goal/check_score(datum/component/knpc/HA)
-	if(!istype(HA)) // why is this here >:(
+	if(!istype(HA)) //This proc globally overrides its parent, so we need to call it if HA isn't actually a knpc component.
 		return ..()
 	if(required_ai_flags && !(HA.ai_trait & required_ai_flags))
 		return 0
