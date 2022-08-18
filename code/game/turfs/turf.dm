@@ -46,6 +46,9 @@ GLOBAL_LIST_EMPTY(station_turfs)
 	/// Used by ammo_casing/bounce_away() to determine if the shell casing should make a sizzle sound when it's ejected over the turf. ex: If the turf is supposed to be water, set TRUE.
 	var/bullet_sizzle = FALSE
 
+	///Lumcount added by sources other than lighting datum objects, such as the overlay lighting component.
+	var/dynamic_lumcount = 0
+
 	/// Should we used the smooth tiled dirt decal or not
 	var/tiled_dirt = FALSE
 
@@ -351,7 +354,8 @@ GLOBAL_LIST_EMPTY(station_turfs)
 	if(!canPassSelf)	//Even if mover is unstoppable they need to bump us.
 		firstbump = src
 	if(firstbump)
-		mover.Bump(firstbump)
+		if(mover.Bump(firstbump) == 2)
+			return TRUE
 		return (mover.movement_type & PHASING)
 	return TRUE
 
