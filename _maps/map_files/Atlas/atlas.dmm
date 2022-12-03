@@ -2753,13 +2753,6 @@
 /obj/effect/turf_decal/ship/delivery/yellow,
 /turf/open/floor/engine,
 /area/quartermaster/storage)
-"je" = (
-/obj/machinery/atmospherics/pipe/simple/purple/hidden{
-	dir = 4
-	},
-/obj/effect/spawner/structure/window/plasma/reinforced,
-/turf/open/floor/plating,
-/area/engine/atmos)
 "jf" = (
 /obj/structure/disposalpipe/segment{
 	dir = 4
@@ -45569,7 +45562,7 @@ lY
 ZR
 RN
 RN
-je
+Cv
 RN
 RN
 gd
