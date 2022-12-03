@@ -459,7 +459,7 @@
  *   from STATE_FIRING to STATE_NOTLOADED if no more ammo,
  *   from STATE_FED if not semi-auto and have ammo
  *   from STATE_CHAMBERED if semi-auto and have ammo.
- * Returns projectile if successfully fired, FALSE otherwise.
+ * Returns TRUE if successfully fired, FALSE otherwise.
  */
 /obj/machinery/ship_weapon/proc/fire(atom/target, shots = weapon_type.burst_size, manual = TRUE)
 	set waitfor = FALSE //As to not hold up any feedback messages.
