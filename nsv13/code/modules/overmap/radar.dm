@@ -11,32 +11,32 @@
 	req_access = list()
 	circuit = /obj/item/circuitboard/computer/ship/dradis
 	var/stored = "blank"
-	// var/on = TRUE //Starts on by default.
-	// var/scanning_speed = 2 //Duration of each pulse.
-	// var/last_scanning_speed = 2 //To update the sound loop
-	// var/start_with_sound = FALSE //Used to stop fighters playing dradis sounds all at once and being annoying.
-	// var/show_asteroids = FALSE //Used so that mining can track what they're supposed to be drilling.
-	// var/mining_sensor_tier = 1
-	// var/last_ship_count = 0 //Plays a tone when ship count changes
-	// //Alpha sliders to let you filter out info you don't want to see.
-	// var/showFriendlies = 100
-	// var/showEnemies= 100
-	// var/showAsteroids = 100 //add planets to this eventually.
-	// var/showAnomalies = 100
-	// var/sensor_range = 0 //Automatically set to equal base sensor range on init.
-	// var/base_sensor_range = SENSOR_RANGE_DEFAULT //In tiles. How far your sensors can pick up precise info about ships.
-	// var/zoom_factor = 0.5 //Lets you zoom in / out on the DRADIS for more precision, or for better info.
-	// var/zoom_factor_min = 0.25
-	// var/zoom_factor_max = 2
-	// var/next_hail = 0
-	// var/hail_range = 50 //Decent distance.
+	var/on = TRUE //Starts on by default.
+	var/scanning_speed = 2 //Duration of each pulse.
+	var/last_scanning_speed = 2 //To update the sound loop
+	var/start_with_sound = FALSE //Used to stop fighters playing dradis sounds all at once and being annoying.
+	var/show_asteroids = FALSE //Used so that mining can track what they're supposed to be drilling.
+	var/mining_sensor_tier = 1
+	var/last_ship_count = 0 //Plays a tone when ship count changes
+	//Alpha sliders to let you filter out info you don't want to see.
+	var/showFriendlies = 100
+	var/showEnemies= 100
+	var/showAsteroids = 100 //add planets to this eventually.
+	var/showAnomalies = 100
+	var/sensor_range = 0 //Automatically set to equal base sensor range on init.
+	var/base_sensor_range = SENSOR_RANGE_DEFAULT //In tiles. How far your sensors can pick up precise info about ships.
+	var/zoom_factor = 0.5 //Lets you zoom in / out on the DRADIS for more precision, or for better info.
+	var/zoom_factor_min = 0.25
+	var/zoom_factor_max = 2
+	var/next_hail = 0
+	var/hail_range = 50 //Decent distance.
 	//For traders. Lets you link supply pod beacons to designate where traders land.
 	var/usingBeacon = FALSE //Var copied from express consoles so this doesn't break. I love abusing inheritance ;)
 	var/obj/item/supplypod_beacon/beacon
-	// var/sensor_mode = SENSOR_MODE_PASSIVE
-	// var/radar_delay = MIN_RADAR_DELAY
-	// var/radar_can_pulse = TRUE
-	// ///Holder for the ui and its behaviour. This allows us to give other things dradis ui, even if they have a complely unrelated typepath.
+	var/sensor_mode = SENSOR_MODE_PASSIVE
+	var/radar_delay = MIN_RADAR_DELAY
+	var/radar_can_pulse = TRUE
+	///Holder for the ui and its behaviour. This allows us to give other things dradis ui, even if they have a complely unrelated typepath.
 	var/datum/component/radar_ui/radar_ui = new(src)
 
 
@@ -157,11 +157,8 @@ Called by add_sensor_profile_penalty if remove_in is used.
 	desc = "A modified dradis console which links to the mining ship's mineral scanners, able to pick up asteroids that can be mined."
 	req_one_access_txt = "31;48"
 	circuit = /obj/item/circuitboard/computer/ship/dradis/mining
-	radar_ui.show_asteroids = TRUE
+	show_asteroids = TRUE
 
-/obj/machinery/computer/ship/dradis/mining/Initialize()
-	. = ..()
-	radar_ui/show_asteroids = TRUE
 
 /obj/machinery/computer/ship/dradis/internal
 	name = "integrated dradis console"
@@ -285,7 +282,7 @@ Called by add_sensor_profile_penalty if remove_in is used.
  * * obj/Parent: What its atatched to. Required.
  */
 /datum/component/radar_ui
-	var/atom/parent
+	dupe_mode = COMPONENT_DUPE_ALLOWED
 	var/scanning_speed = 2 //Duration of each pulse.
 	var/last_scanning_speed = 2 //To update the sound loop
 	var/start_with_sound = FALSE //Used to stop fighters playing dradis sounds all at once and being annoying.
@@ -449,6 +446,10 @@ Called by add_sensor_profile_penalty if remove_in is used.
 	var/next_pulse = OM.last_radar_pulse + radar_delay
 	if(world.time >= next_pulse)
 		return TRUE
+
+
+/datum/component/radar_ui/cargo
+	dupe_mode = COMPONENT_DUPE_HIGHLANDER
 
 /obj/structure/overmap/proc/send_radar_pulse()
 	var/next_pulse = last_radar_pulse + RADAR_VISIBILITY_PENALTY
