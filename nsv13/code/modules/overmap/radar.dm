@@ -178,9 +178,6 @@ Called by add_sensor_profile_penalty if remove_in is used.
 	mid_length = 2 SECONDS
 	volume = 60
 
-/obj/machinery/computer/ship/dradis/power_change()
-	..()
-
 /obj/machinery/computer/ship/dradis/set_position(obj/structure/overmap/OM) //This tells our overmap what kind of console we are. This is useful as pilots need to see the dradis pop-up as they enter the ship view.
 	OM.dradis = src
 	RegisterSignal(OM, COMSIG_FTL_STATE_CHANGE, .proc/reset_dradis_contacts, override=TRUE)
