@@ -236,7 +236,7 @@ Called by add_sensor_profile_penalty if remove_in is used.
 			mining_sensor_tier = MS.tier
 			qdel(MS)
 		else
-			to_chat(user, "<span class='notice'>[src] has already been upgraded to a higher tier than [MS].</span>")
+			to_chat(user, "<span class='notice'>[src] has already been upgraded to an equal or higher tier than [MS].</span>")
 
 //Cloaking and sensors!
 
