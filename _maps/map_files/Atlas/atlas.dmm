@@ -5459,9 +5459,8 @@
 /turf/open/floor/plating,
 /area/maintenance/nsv/deck2/port/fore)
 "ro" = (
-/obj/machinery/atmospherics/components/unary/vent_pump/siphon/atmos{
-	dir = 8;
-	id_tag = "sdmix_out"
+/obj/machinery/atmospherics/components/unary/passive_vent{
+	dir = 8
 	},
 /turf/open/floor/engine/vacuum,
 /area/engine/atmos)
@@ -12595,9 +12594,8 @@
 /turf/open/floor/monotile/dark,
 /area/nsv/weapons)
 "QB" = (
-/obj/machinery/atmospherics/components/unary/outlet_injector/atmos{
-	dir = 4;
-	id = "sdmix_in"
+/obj/machinery/atmospherics/components/unary/passive_vent{
+	dir = 4
 	},
 /turf/open/floor/engine/vacuum,
 /area/engine/atmos)
@@ -12818,13 +12816,11 @@
 	dir = 5
 	},
 /obj/machinery/atmospherics/pipe/simple/yellow/visible/layer4,
-/obj/machinery/computer/atmos_control/tank/air_tank{
-	density = 0;
+/obj/machinery/computer/atmos_control{
+	name = "Mix tank monitoring";
 	dir = 4;
-	input_tag = "sdmix_in";
-	name = "Reactor Mix Control";
-	output_tag = "sdmix_out";
 	pixel_x = -9;
+	density = 0;
 	sensors = list("sdmix_sensor"="Reactor Mix Tank")
 	},
 /turf/open/floor/plating,
