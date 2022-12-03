@@ -52,8 +52,8 @@
 	belt = /obj/item/melee/classic_baton/telescopic/stunsword
 	ears = /obj/item/radio/headset/heads/xo //NSV13 - update to XO
 	uniform = /obj/item/clothing/under/ship/officer
-	suit = /obj/item/clothing/suit/ship/officer
 	shoes = /obj/item/clothing/shoes/jackboots //NSV13 - Officers get boots
+	suit = /obj/item/clothing/suit/armor/vest/capcarapace/officer
 	head = /obj/item/clothing/head/beret/ship/xo //NSV13 - update to XO
 	backpack_contents = list(/obj/item/storage/box/ids=1,
 		/obj/item/melee/classic_baton/police/telescopic=1,

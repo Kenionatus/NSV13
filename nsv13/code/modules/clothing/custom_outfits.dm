@@ -127,7 +127,7 @@
 /datum/outfit/centcom_admiral
 	name = "Admiral (NSV13)"
 	uniform = /obj/item/clothing/under/ship/officer/admiral
-	suit = /obj/item/clothing/suit/ship/officer/admiral
+	suit = /obj/item/clothing/suit/armor/vest/capcarapace/officer/admiral
 	shoes = /obj/item/clothing/shoes/jackboots
 	gloves = /obj/item/clothing/gloves/combat
 	glasses = /obj/item/clothing/glasses/sunglasses
@@ -142,7 +142,7 @@
 /datum/outfit/centcom_admiral/fleet
 	name = "Admiral (Fleet)"
 	uniform = /obj/item/clothing/under/ship/officer/admiral/fleet
-	suit = /obj/item/clothing/suit/ship/officer/admiral/fleet
+	suit = /obj/item/clothing/suit/armor/vest/capcarapace/officer/admiral/fleet
 	head = /obj/item/clothing/head/ship/fleet_admiral
 	rank_title = "Fleet Admiral"
 
@@ -151,7 +151,7 @@
 /datum/outfit/centcom_admiral/grand
 	name = "Admiral (Grand Admiral)"
 	uniform = /obj/item/clothing/under/ship/officer/admiral/grand
-	suit = /obj/item/clothing/suit/ship/officer/admiral/grand
+	suit = /obj/item/clothing/suit/armor/vest/capcarapace/officer/admiral/grand
 	head = /obj/item/clothing/head/ship/fleet_admiral
 	neck = /obj/item/clothing/neck/cloak/ship/admiral
 	rank_title = "Grand Admiral"

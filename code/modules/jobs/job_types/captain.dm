@@ -49,7 +49,7 @@
 	ears = /obj/item/radio/headset/heads/captain/alt
 	gloves = /obj/item/clothing/gloves/color/captain
 	uniform =  /obj/item/clothing/under/ship/officer //NSV13 - officer's uniform
-	suit = /obj/item/clothing/suit/ship/officer //NSV13 - officer's uniform
+	suit = /obj/item/clothing/suit/armor/vest/capcarapace/officer //NSV13 - officer's uniform
 	shoes = /obj/item/clothing/shoes/jackboots //NSV13 - boots
 	head = /obj/item/clothing/head/beret/ship/captain //NSV13 - captain's beret
 	backpack_contents = list(/obj/item/melee/classic_baton/police/telescopic=1, /obj/item/station_charter=1, /obj/item/modular_computer/tablet/preset/advanced/command=1, /obj/item/squad_pager/all_channels=1) //NSV13 - added squad pager

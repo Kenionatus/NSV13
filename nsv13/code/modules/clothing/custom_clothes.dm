@@ -110,10 +110,14 @@
 	desc = "A bulky vest worn by the colonial peacekeepers. Its nanocarbon mesh fabrics are sure to stop almost any projectile."
 	armor = list("melee" = 30, "bullet" = 45, "laser" = 10, "energy" = 10, "bomb" = 25, "bio" = 0, "rad" = 0, "fire" = 50, "acid" = 60)
 
-/obj/item/clothing/suit/ship/officer
+//obj/item/clothing/suit/ship/officer
+/obj/item/clothing/suit/armor/vest/capcarapace/officer
 	name = "Officer's dress jacket"
 	desc = "A rather heavy jacket of a reasonable quality. It's not the most comfortable thing you could wear, but it's remained part of an officer's uniform for quite some time."
+	icon = 'nsv13/icons/obj/clothing/suits.dmi'
+	worn_icon = 'nsv13/icons/mob/suit.dmi'
 	icon_state = "officer_jacket"
+	item_state = "officer_jacket"
 
 /obj/item/clothing/suit/ship/engineer
 	name = "Engineering webbing"
@@ -587,16 +591,16 @@
 	icon_state = "fleet_admiral"
 	worn_icon_state = "fleet_admiral"
 
-/obj/item/clothing/suit/ship/officer/admiral
+/obj/item/clothing/suit/armor/vest/capcarapace/officer/admiral
 	name = "Admiral's dress jacket"
 	desc = "A hefty and high quality jacket worn by those who bear any admiral rank. It is adorned with countless medals and stamps."
 	icon_state = "jacket_admiral"
 
-/obj/item/clothing/suit/ship/officer/admiral/fleet
+/obj/item/clothing/suit/armor/vest/capcarapace/officer/admiral/fleet
 	name = "Fleet admiral's dress jacket"
 	icon_state = "jacket_fleet_admiral"
 
-/obj/item/clothing/suit/ship/officer/admiral/grand
+/obj/item/clothing/suit/armor/vest/capcarapace/officer/admiral/grand
 	name = "Grand admiral's dress jacket"
 	icon_state = "jacket_grand_admiral"
 
