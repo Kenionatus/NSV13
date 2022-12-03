@@ -7,6 +7,9 @@
  * Foam plating
  */
 
+/turf/open/floor/plating/burnable
+	burns = TRUE
+
 /turf/open/floor/plating
 	name = "plating"
 	icon_state = "plating"

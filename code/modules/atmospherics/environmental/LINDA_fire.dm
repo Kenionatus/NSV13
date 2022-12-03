@@ -17,7 +17,7 @@
 	var/has_fuel = (air.get_moles(GAS_PLASMA) + air.get_moles(GAS_CONSTRICTED_PLASMA)) > 0.5 || air.get_moles(GAS_TRITIUM) > 0.5 || air.get_fuel_amount(exposed_temperature) > 0.5 //NSV13 - constricted plasma
 	if(active_hotspot)
 		if(soh)
-			if(has_fuel)
+			if(has_fuel || burns)
 				if(active_hotspot.temperature < exposed_temperature)
 					active_hotspot.temperature = exposed_temperature
 				if(active_hotspot.volume < exposed_volume)
