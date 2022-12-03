@@ -67,7 +67,7 @@ remove_in: Optional arg, if > 0: Will remove the effect in that amount of ticks
 		return
 	addtimer(CALLBACK(src, .proc/remove_sensor_profile_penalty, penalty), remove_in)
 
-/*
+/**
 Reduces sensor profile by the amount given as arg.
 Called by add_sensor_profile_penalty if remove_in is used.
 */
