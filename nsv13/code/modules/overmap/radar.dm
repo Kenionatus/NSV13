@@ -35,12 +35,10 @@
 	var/obj/item/supplypod_beacon/beacon
 	var/sensor_mode = SENSOR_MODE_PASSIVE
 	var/radar_delay = MIN_RADAR_DELAY
+	var/radar_can_pulse = TRUE
+	///Holder for the ui and its behaviour. This allows us to give other things dradis ui, even if they have a complely unrelated typepath.
+	var/radar_ui = new()
 
-/obj/machinery/computer/ship/dradis/proc/can_radar_pulse()
-	var/obj/structure/overmap/OM = get_overmap()
-	var/next_pulse = OM.last_radar_pulse + radar_delay
-	if(world.time >= next_pulse)
-		return TRUE
 
 /obj/machinery/computer/ship/dradis/internal/can_radar_pulse()
 	return FALSE
@@ -55,7 +53,6 @@
 
 /obj/machinery/computer/ship/dradis/minor/can_radar_pulse()
 	return FALSE
-
 
 /*
 Adds a penalty to from how far away you can be detected.
@@ -76,17 +73,6 @@ Called by add_sensor_profile_penalty if remove_in is used.
 */
 /obj/structure/overmap/proc/remove_sensor_profile_penalty(amount)
 	sensor_profile -= amount
-
-/obj/structure/overmap/proc/send_radar_pulse()
-	var/next_pulse = last_radar_pulse + RADAR_VISIBILITY_PENALTY
-	if(world.time < next_pulse)
-		return FALSE
-	relay('nsv13/sound/effects/ship/sensor_pulse_send.ogg')
-	relay_to_nearby('nsv13/sound/effects/ship/sensor_pulse_hit.ogg', ignore_self=TRUE, sound_range=255, faction_check=TRUE)
-	last_radar_pulse = world.time
-	addtimer(VARSET_CALLBACK(src, max_tracking_range, max_tracking_range), RADAR_VISIBILITY_PENALTY)
-	max_tracking_range *= 2
-	add_sensor_profile_penalty(max_tracking_range, RADAR_VISIBILITY_PENALTY)
 
 /obj/machinery/computer/ship/dradis/proc/send_radar_pulse()
 	var/obj/structure/overmap/OM = get_overmap()
@@ -214,7 +200,7 @@ Called by add_sensor_profile_penalty if remove_in is used.
 /obj/machinery/computer/ship/dradis/can_interact(mob/user) //Override this code to allow people to use consoles when flying the ship.
 	if(locate(user) in linked?.operators)
 		return TRUE
-	if(!user.can_interact_with(src)) //Theyre too far away and not flying the ship
+	if(!user.can_interact_with(src)) //They're too far away and not flying the ship
 		return FALSE
 	if((interaction_flags_atom & INTERACT_ATOM_REQUIRES_DEXTERITY) && !user.IsAdvancedToolUser())
 		to_chat(user, "<span class='warning'>You don't have the dexterity to do this!</span>")
@@ -236,58 +222,7 @@ Called by add_sensor_profile_penalty if remove_in is used.
 		ui.open()
 		ui.set_autoupdate(TRUE) // Contact positions
 
-/obj/machinery/computer/ship/dradis/ui_act(action, params)
-	. = ..()
-	if(isobserver(usr))
-		return
-	if(.)
-		return
-	if(!has_overmap())
-		return
-	var/alphaSlide = text2num(params["alpha"])
-	alphaSlide = CLAMP(alphaSlide, 0, 100) //Just in case we have a malformed input.
-	switch(action)
-		if("showFriendlies")
-			showFriendlies = alphaSlide
-		if("showEnemies")
-			showEnemies = alphaSlide
-		if("showAsteroids")
-			showAsteroids = alphaSlide
-		if("showAnomalies")
-			showAnomalies = alphaSlide
-		if("zoomout")
-			zoom_factor = clamp(zoom_factor - zoom_factor_min, zoom_factor_min, zoom_factor_max)
-		if("zoomin")
-			zoom_factor = clamp(zoom_factor + zoom_factor_min, zoom_factor_min, zoom_factor_max)
-		if("setZoom")
-			if(!params["zoom"])
-				return
-			zoom_factor = clamp(params["zoom"] / 100, zoom_factor_min, zoom_factor_max)
-		if("hail")
-			var/obj/structure/overmap/target = locate(params["target"])
-			if(!target) //Anomalies don't count.
-				return
-			if(world.time < next_hail)
-				return
-			if(target == linked)
-				return
-			next_hail = world.time + 10 SECONDS //I hate that I need to do this, but yeah.
-			if(overmap_dist(target, linked) <= hail_range)
-				if ( istype( src, /obj/machinery/computer/ship/dradis/minor/cargo ) )
-					var/obj/machinery/computer/ship/dradis/minor/cargo/console = src // Must cast before passing into proc
-					target.try_deliver( usr, console )
-				else
-					target.try_hail(usr, linked)
-		if("radar_pulse")
-			send_radar_pulse()
-		if("sensor_mode")
-			sensor_mode = (sensor_mode == SENSOR_MODE_PASSIVE) ? SENSOR_MODE_RADAR : SENSOR_MODE_PASSIVE
-		if("radar_delay")
-			var/newDelay = input(usr, "Set a new radar delay (seconds)", "Radar Delay", null) as num|null
-			if(!newDelay)
-				return
-			newDelay = CLAMP(newDelay SECONDS, MIN_RADAR_DELAY, MAX_RADAR_DELAY)
-			radar_delay = newDelay
+
 
 /obj/machinery/computer/ship/dradis/attackby(obj/item/I, mob/user) //Allows you to upgrade dradis consoles to show asteroids, as well as revealing more valuable ones.
 	. = ..()
@@ -340,7 +275,77 @@ Called by add_sensor_profile_penalty if remove_in is used.
 			mouse_opacity = TRUE
 			addtimer(CALLBACK(src, .proc/handle_cloak, TRUE), 15 SECONDS)
 
-/obj/machinery/computer/ship/dradis/ui_data(mob/user) //NEW AND IMPROVED DRADIS 2.0. NOW FEATURING LESS LAG AND CLICKSPAM. ~~This was a pain to code. Don't make me do it again..please? -Kmc~~ 2020 Kmc here, I recoded it. You're right! It was painful, also your code sucked :)
+/**
+ * UI behaviour of dradis consoles. This is split off to allow for composition.
+ Objects other than dradis consoles utilise the same UI and this datum allows us
+ to attach such a UI to any datum.
+ *
+ * New() arguments:
+ * * obj/Parent: What it's atatched to. Required.
+ */
+/datum/radar_ui
+	var/atom/parent
+
+/datum/radar_ui/New(obj/Parent)
+	if(!parent)
+		throw EXCEPTION("/datum/radar_ui created without parent. parent required.")
+	parent = Parent
+	. = ..()
+
+/datum/radar_ui/ui_act(action, params)
+	. = ..()
+	if(isobserver(usr))
+		return
+	if(.)
+		return
+	if(!has_overmap())
+		return
+	var/alphaSlide = text2num(params["alpha"])
+	alphaSlide = CLAMP(alphaSlide, 0, 100) //Just in case we have a malformed input.
+	switch(action)
+		if("showFriendlies")
+			showFriendlies = alphaSlide
+		if("showEnemies")
+			showEnemies = alphaSlide
+		if("showAsteroids")
+			showAsteroids = alphaSlide
+		if("showAnomalies")
+			showAnomalies = alphaSlide
+		if("zoomout")
+			zoom_factor = clamp(zoom_factor - zoom_factor_min, zoom_factor_min, zoom_factor_max)
+		if("zoomin")
+			zoom_factor = clamp(zoom_factor + zoom_factor_min, zoom_factor_min, zoom_factor_max)
+		if("setZoom")
+			if(!params["zoom"])
+				return
+			zoom_factor = clamp(params["zoom"] / 100, zoom_factor_min, zoom_factor_max)
+		if("hail")
+			var/obj/structure/overmap/target = locate(params["target"])
+			if(!target) //Anomalies don't count.
+				return
+			if(world.time < next_hail)
+				return
+			if(target == linked)
+				return
+			next_hail = world.time + 10 SECONDS //I hate that I need to do this, but yeah.
+			if(overmap_dist(target, linked) <= hail_range)
+				if ( istype( src, /obj/machinery/computer/ship/dradis/minor/cargo ) )
+					var/obj/machinery/computer/ship/dradis/minor/cargo/console = src // Must cast before passing into proc
+					target.try_deliver( usr, console )
+				else
+					target.try_hail(usr, linked)
+		if("radar_pulse")
+			send_radar_pulse()
+		if("sensor_mode")
+			sensor_mode = (sensor_mode == SENSOR_MODE_PASSIVE) ? SENSOR_MODE_RADAR : SENSOR_MODE_PASSIVE
+		if("radar_delay")
+			var/newDelay = input(usr, "Set a new radar delay (seconds)", "Radar Delay", null) as num|null
+			if(!newDelay)
+				return
+			newDelay = CLAMP(newDelay SECONDS, MIN_RADAR_DELAY, MAX_RADAR_DELAY)
+			radar_delay = newDelay
+
+/datum/radar_ui/ui_data(mob/user) //NEW AND IMPROVED DRADIS 2.0. NOW FEATURING LESS LAG AND CLICKSPAM. ~~This was a pain to code. Don't make me do it again..please? -Kmc~~ 2020 Kmc here, I recoded it. You're right! It was painful, also your code sucked :)
 	var/list/data = list()
 	var/list/blips = list() //2-d array declaration
 	var/ship_count = 0
@@ -413,6 +418,32 @@ Called by add_sensor_profile_penalty if remove_in is used.
 	else
 		data["can_radar_pulse"] = FALSE
 	return data
+
+/datum/radar_ui/proc/can_radar_pulse()
+	if(!parent?.radar_can_pulse())
+		return FALSE
+	var/obj/structure/overmap/OM = get_overmap()
+	var/next_pulse = OM.last_radar_pulse + radar_delay
+	if(world.time >= next_pulse)
+		return TRUE
+
+/obj/structure/overmap/proc/send_radar_pulse()
+	var/next_pulse = last_radar_pulse + RADAR_VISIBILITY_PENALTY
+	if(world.time < next_pulse)
+		return FALSE
+	relay('nsv13/sound/effects/ship/sensor_pulse_send.ogg')
+	relay_to_nearby('nsv13/sound/effects/ship/sensor_pulse_hit.ogg', ignore_self=TRUE, sound_range=255, faction_check=TRUE)
+	last_radar_pulse = world.time
+	addtimer(VARSET_CALLBACK(src, max_tracking_range, max_tracking_range), RADAR_VISIBILITY_PENALTY)
+	max_tracking_range *= 2
+	add_sensor_profile_penalty(max_tracking_range, RADAR_VISIBILITY_PENALTY)
+
+/datum/radar_ui/proc/has_overmap()
+	parent.has_overmap()
+
+/datum/radar_ui/proc/get_overmap(failsafe = FALSE)
+return parent.get_overmap(failsafe)
+
 
 /datum/asset/simple/overmap_flight
 	assets = list(
