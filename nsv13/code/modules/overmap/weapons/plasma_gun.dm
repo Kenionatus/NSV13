@@ -158,27 +158,30 @@
 	loader = locate(/obj/machinery/atmospherics/components/unary/plasma_loader) in orange(1, src)
 	loader.linked_gun = src
 
-/obj/machinery/ship_weapon/plasma_caster/can_fire(shots = weapon_type.burst_size)
-	if((state < STATE_CHAMBERED) || !chambered)
-		return FALSE
-	if(state >= STATE_FIRING)
-		return FALSE
-	if(cooldown > 0)
-		say("DANGER! Splines unreticulated, spline reticulization process may take up to [cooldown] seconds to complete.")
-		return FALSE
-	if(maintainable && malfunction) //Do we need maintenance?
-		return FALSE
-	if(plasma_mole_amount < plasma_fire_moles) //Is there enough Plasma Gas to fire?
-		say("DANGER! Not enough phoron to safely dischard core! Please ensure enough gas is present before firing!")
-		return FALSE
-	if(loader.on)
-		say("DANGER! Phoron Gas Regulator back pressure surge avoided! Ensure the regulator is off before operating!")
-		return FALSE
-
+/obj/machinery/ship_weapon/plasma_caster/fire(atom/target, shots = weapon_type.burst_size, manual = TRUE)
+	if(!can_fire(shots))
+		if(cooldown > 0)
+			say("DANGER! Splines unreticulated, spline reticulization process may take up to [cooldown] seconds to complete.")
+			return FALSE
+		if(plasma_mole_amount < plasma_fire_moles) //Is there enough Plasma Gas to fire?
+			say("DANGER! Not enough phoron to safely dischard core! Please ensure enough gas is present before firing!")
+			return FALSE
+		if(loader.on)
+			say("DANGER! Phoron Gas Regulator back pressure surge avoided! Ensure the regulator is off before operating!")
+			return FALSE
 	if(prob(max(100-alignment, 0))) //The lower the alignment the higher the misfire chance
 		misfire()
 		return FALSE
-	return TRUE
+	. = ..()
+
+/obj/machinery/ship_weapon/plasma_caster/can_fire(shots = weapon_type.burst_size)
+	. = ..()
+	if(cooldown > 0)
+		return FALSE
+	if(plasma_mole_amount < plasma_fire_moles) //Is there enough Plasma Gas to fire?
+		return FALSE
+	if(loader.on)
+		return FALSE
 
 
 /obj/machinery/ship_weapon/plasma_caster/local_fire()
