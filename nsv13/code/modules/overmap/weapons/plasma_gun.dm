@@ -174,23 +174,12 @@
 	if(loader.on)
 		say("DANGER! Phoron Gas Regulator back pressure surge avoided! Ensure the regulator is off before operating!")
 		return FALSE
-	if(alignment < 90)
-		if(prob(10))
-			misfire()
-			return FALSE
-	if(alignment < 75)
-		if(prob(25))
-			misfire()
-			return FALSE
-	if(alignment < 50)
-		if(prob(50))
-			misfire()
-			return FALSE
-	if(alignment < 25)
+
+	if(prob(max(100-alignment, 0))) //The lower the alignment the higher the misfire chance
 		misfire()
 		return FALSE
-	else
-		return TRUE
+	return TRUE
+
 
 /obj/machinery/ship_weapon/plasma_caster/local_fire()
 	for(var/mob/living/M in get_hearers_in_view(7, src)) //burn out eyes in view
