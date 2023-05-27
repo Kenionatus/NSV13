@@ -467,52 +467,51 @@
 /obj/machinery/ship_weapon/proc/fire(atom/target, shots = weapon_type.burst_size, manual = TRUE)
 	set waitfor = FALSE //As to not hold up any feedback messages.
 
-	// Energy weapons fire behavior
-	if(istype(src, /obj/machinery/ship_weapon/energy)) // Now 100% more modular!
-		if(can_fire(target, shots))
-			if(manual)
-				linked.last_fired = overlay
-			for(var/i = 0, i < shots, i++)
-				do_animation()
-
-				local_fire()
-				overmap_fire(target)
-				charge -= charge_per_shot
-
-				after_fire()
-				if(shots > 1)
-					sleep(weapon_type.burst_fire_delay)
-			return TRUE
+	if(!can_fire(target, shots))
 		return FALSE
 
-	// Default weapons fire behavior
-	if(can_fire(target, shots))
+	// Energy weapons fire behavior
+	if(istype(src, /obj/machinery/ship_weapon/energy)) // Now 100% more modular!
 		if(manual)
 			linked.last_fired = overlay
-
 		for(var/i = 0, i < shots, i++)
-			state = STATE_FIRING
 			do_animation()
-			overmap_fire(target)
 
-			ammo -= chambered
 			local_fire()
-			if(!istype(chambered, /obj/item/ship_weapon/ammunition/torpedo/freight)) // Don't qdel freight torpedoes, these are being moved to the stations for additional checks
-				qdel(chambered)
-			chambered = null
+			overmap_fire(target)
+			charge -= charge_per_shot
 
-			if(length(ammo))
-				state = STATE_FED
-			else
-				state = STATE_NOTLOADED
-
-			if(semi_auto)
-				chamber(rapidfire = TRUE)
 			after_fire()
 			if(shots > 1)
 				sleep(weapon_type.burst_fire_delay)
 		return TRUE
-	return FALSE
+
+	// Default weapons fire behavior
+	if(manual)
+		linked.last_fired = overlay
+
+	for(var/i = 0, i < shots, i++)
+		state = STATE_FIRING
+		do_animation()
+		overmap_fire(target)
+
+		ammo -= chambered
+		local_fire()
+		if(!istype(chambered, /obj/item/ship_weapon/ammunition/torpedo/freight)) // Don't qdel freight torpedoes, these are being moved to the stations for additional checks
+			qdel(chambered)
+		chambered = null
+
+		if(length(ammo))
+			state = STATE_FED
+		else
+			state = STATE_NOTLOADED
+
+		if(semi_auto)
+			chamber(rapidfire = TRUE)
+		after_fire()
+		if(shots > 1)
+			sleep(weapon_type.burst_fire_delay)
+	return TRUE
 
 /**
  * Handles firing animations and sounds around the mapped weapon
