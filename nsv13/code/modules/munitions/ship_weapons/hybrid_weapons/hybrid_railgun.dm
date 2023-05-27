@@ -96,25 +96,26 @@
 
 /obj/machinery/ship_weapon/hybrid_rail/fire(atom/target, shots = weapon_type.burst_size, manual = TRUE)
 	set waitfor = FALSE //As to not hold up any feedback messages.
-	if(can_fire(target, shots))
-		if(manual)
-			linked.last_fired = overlay
-		for(var/i = 0, i < shots, i++)
-			do_animation()
-			state = STATE_FIRING
-			local_fire()
-			overmap_fire(target)
-			ammo -= chambered
-			qdel(chambered)
-			chambered = null
-			capacitor_charge = 0
-			if(ammo?.len)
-				state = STATE_FED
-				chamber(rapidfire = TRUE)
-			else
-				state = STATE_NOTLOADED
-			after_fire()
-	return FALSE
+	if(!can_fire(target, shots))
+		return FALSE
+	if(manual)
+		linked.last_fired = overlay
+	for(var/i = 0, i < shots, i++)
+		do_animation()
+		state = STATE_FIRING
+		local_fire()
+		overmap_fire(target)
+		ammo -= chambered
+		qdel(chambered)
+		chambered = null
+		capacitor_charge = 0
+		if(ammo?.len)
+			state = STATE_FED
+			chamber(rapidfire = TRUE)
+		else
+			state = STATE_NOTLOADED
+		after_fire()
+	return TRUE
 
 /obj/machinery/ship_weapon/hybrid_rail/can_fire(shots = weapon_type.burst_size)
 	if((state < STATE_CHAMBERED) || !chambered)
