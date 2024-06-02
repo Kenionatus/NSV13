@@ -153,6 +153,7 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_PUSHIMMUNE		"push_immunity"
 #define TRAIT_SHOCKIMMUNE		"shock_immunity"
 #define TRAIT_STABLEHEART		"stable_heart"
+#define TRAIT_CORPSELOCKED "corpselocked" //Prevents you from leaving your corpse - NSV13
 #define TRAIT_STABLELIVER		"stable_liver"
 #define TRAIT_NOVOMIT			"no_vomit"
 #define TRAIT_RESISTHEAT		"resist_heat"
@@ -402,3 +403,8 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_SUIT_SENSORS "suit_sensors"
 ///Mob is tracked by nanites, and on glob suit sensors list
 #define TRAIT_NANITE_SENSORS "nanite_sensors"
+
+//NSV13 traits
+#define TRAIT_NODAMPENERS "nodampeners" //! Prevents a ship with this trait from using dampeners.
+	#define TRAIT_SOURCE_OVERMAP_BLACKHOLE "overmap_singularity"
+//NSV13 traits end

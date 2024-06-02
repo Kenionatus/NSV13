@@ -13,10 +13,10 @@
 	var/broken = FALSE
 	var/initialized_at
 
-/datum/tgui_panel/New(client/client)
+/datum/tgui_panel/New(client/client, id)
 	src.client = client
-	window = new(client, "browseroutput")
-	window.subscribe(src, .proc/on_message)
+	window = new(client, id)
+	window.subscribe(src, PROC_REF(on_message))
 
 /datum/tgui_panel/Del()
 	window.unsubscribe(src)
@@ -42,7 +42,8 @@
 	sleep(1)
 	initialized_at = world.time
 	// Perform a clean initialization
-	window.initialize(inline_assets = list(
+	window.initialize(assets = list(
+		strict_mode = TRUE,
 		get_asset_datum(/datum/asset/simple/tgui_panel),
 	))
 	window.send_asset(get_asset_datum(/datum/asset/simple/namespaced/fontawesome))
@@ -57,7 +58,7 @@
 	request_telemetry()
 	// Send verbs
 	set_verb_infomation(client)
-	addtimer(CALLBACK(src, .proc/on_initialize_timed_out), 5 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(on_initialize_timed_out)), 5 SECONDS)
 
 /**
  * private

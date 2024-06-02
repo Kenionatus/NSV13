@@ -5,6 +5,8 @@
 	permeability_coefficient = 0.9
 	slot_flags = ITEM_SLOT_ICLOTHING
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 0, "acid" = 0, "stamina" = 0)
+	drop_sound = 'sound/items/handling/cloth_drop.ogg'
+	pickup_sound =  'sound/items/handling/cloth_pickup.ogg'
 	var/fitted = FEMALE_UNIFORM_FULL // For use in alternate clothing styles for women
 	var/has_sensor = HAS_SENSORS // For the crew computer
 	var/random_sensor = TRUE
@@ -138,7 +140,12 @@
 				to_chat(user, "<span class='notice'>You attach [I] to [src].</span>")
 
 			var/accessory_color = attached_accessory.icon_state
-			accessory_overlay = mutable_appearance('icons/mob/accessories.dmi', "[accessory_color]")
+			// NSV13 starts here - Checks if accessory is NSV exclusive
+			if(icon_exists('nsv13/icons/mob/accessories.dmi', accessory_color))
+				accessory_overlay = mutable_appearance('nsv13/icons/mob/accessories.dmi', "[accessory_color]")
+			else
+				accessory_overlay = mutable_appearance('icons/mob/accessories.dmi', "[accessory_color]")
+			// NSV13 ends here
 			accessory_overlay.alpha = attached_accessory.alpha
 			accessory_overlay.color = attached_accessory.color
 
@@ -269,7 +276,7 @@
 	left = new(base)
 	left.Shift(WEST, 3)
 	base.Insert(left, dir = WEST)
-	
+
 	right = new(left)
 	right.Flip(EAST)
 	base.Insert(right, dir = EAST)

@@ -67,7 +67,7 @@
 
 	var/datum/trackable/track = new
 
-	var/last_paper_seen = null
+	var/last_tablet_note_seen = null
 	var/can_shunt = TRUE
 	var/last_announcement = "" 		// For AI VOX, if enabled
 	var/turf/waypoint //Holds the turf of the currently selected waypoint.
@@ -97,6 +97,10 @@
 
 	var/list/cam_hotkeys = new/list(9)
 	var/cam_prev
+
+	var/atom/movable/screen/ai/modpc/interfaceButton
+
+	var/datum/robot_control/robot_control //NSV13
 
 /mob/living/silicon/ai/Initialize(mapload, datum/ai_laws/L, mob/target_ai)
 	default_access_list = get_all_accesses()
@@ -130,11 +134,12 @@
 
 	job = JOB_NAME_AI
 
+	create_modularInterface()
 	create_eye()
 	if(client)
 		apply_pref_name("ai",client)
 
-	INVOKE_ASYNC(src, .proc/set_core_display_icon)
+	INVOKE_ASYNC(src, PROC_REF(set_core_display_icon))
 
 
 	holo_icon = getHologramIcon(icon('icons/mob/ai.dmi',"default"))
@@ -144,11 +149,6 @@
 	spark_system.attach(src)
 
 	add_verb(/mob/living/silicon/ai/proc/show_laws_verb)
-
-	aiPDA = new/obj/item/pda/ai(src)
-	aiPDA.owner = real_name
-	aiPDA.ownjob = JOB_NAME_AI
-	aiPDA.name = real_name + " (" + aiPDA.ownjob + ")"
 
 	aiMulti = new(src)
 	radio = new /obj/item/radio/headset/silicon/ai(src)
@@ -168,6 +168,7 @@
 	builtInCamera = new (src)
 	builtInCamera.network = list("ss13")
 	//Nsv13
+	AddComponent(/datum/component/holomap)
 	for(var/stype in subtypesof(/datum/component/simple_teamchat/radio_dependent/squad))
 		AddComponent(stype, override = TRUE)
 	update_overmap() //AIs don't move, so we do this here.
@@ -379,7 +380,7 @@
 		return
 
 	// Guard against misclicks, this isn't the sort of thing we want happening accidentally
-	if(alert("WARNING: This will immediately wipe your core and ghost you, removing your character from the round permanently (similar to cryo). Are you entirely sure you want to do this?",
+	if(alert("WARNING: This will immediately wipe your core and ghost you, removing your character from the round permanently (similar to cryo, so you should ahelp before doing so). Are you entirely sure you want to do this?",
 					"Wipe Core", "No", "No", "Yes") != "Yes")
 		return
 
@@ -467,9 +468,9 @@
 		play_vox_word(href_list["say_word"], null, src)
 		return
 #endif
-	if(href_list["show_paper"])
-		if(last_paper_seen)
-			src << browse(last_paper_seen, "window=show_paper")
+	if(href_list["show_tablet_note"])
+		if(last_tablet_note_seen)
+			src << browse(last_tablet_note_seen, "window=show_tablet")
 	//Carn: holopad requests
 	if(href_list["jumptoholopad"])
 		var/obj/machinery/holopad/H = locate(href_list["jumptoholopad"]) in GLOB.machines
@@ -496,6 +497,7 @@
 		else
 			to_chat(src, "Target is not on or near any active cameras on the station.")
 		return
+	/* NSV13 CHANGES START - Robot Remote Control TGUI Update
 	if(href_list["callbot"]) //Command a bot to move to a selected location.
 		if(call_bot_cooldown > world.time)
 			to_chat(src, "<span class='danger'>Error: Your last call bot command is still processing, please wait for the bot to finish calculating a route.</span>")
@@ -514,6 +516,7 @@
 	if(href_list["botrefresh"]) //Refreshes the bot control panel.
 		botcall()
 		return
+	NSV13 CHANGES END FOR NOW */
 
 	if (href_list["ai_take_control"]) //Mech domination
 		var/obj/mecha/M = locate(href_list["ai_take_control"]) in GLOB.mechas_list
@@ -540,7 +543,12 @@
 			return
 		if(M)
 			M.transfer_ai(AI_MECH_HACK, src, usr) //Called om the mech itself.
+	if(href_list["show_paper_note"])
+		var/obj/item/paper/paper_note = locate(href_list["show_paper_note"])
+		if(!paper_note)
+			return
 
+		paper_note.show_through_camera(usr)
 
 /mob/living/silicon/ai/proc/switchCamera(obj/machinery/camera/C)
 	if(QDELETED(C))
@@ -560,6 +568,7 @@
 	set category = "AI Commands"
 	set name = "Access Robot Control"
 	set desc = "Wirelessly control various automatic robots."
+	/* NSV13 CHANGES START -- Robot Remote Control TGUI Update
 	if(incapacitated())
 		return
 
@@ -588,6 +597,12 @@
 	var/datum/browser/popup = new(src, "botcall", "Remote Robot Control", 700, 400)
 	popup.set_content(d)
 	popup.open()
+
+	NSV13 CHANGES STOP */
+	if(!robot_control) //NSV13
+		robot_control = new(src) //NSV13
+
+	robot_control.ui_interact(src) //NSV13
 
 /mob/living/silicon/ai/proc/set_waypoint(atom/A)
 	var/turf/turf_check = get_turf(A)
@@ -817,13 +832,22 @@
 				"default" = 'icons/mob/ai.dmi',
 				"floating face" = 'icons/mob/ai.dmi',
 				"xeno queen" = 'icons/mob/alien.dmi',
-				"horror" = 'icons/mob/ai.dmi'
-				)
+				"horror" = 'icons/mob/ai.dmi',
+				"clock" = 'nsv13/icons/mob/ai_holo.dmi',
+				"custom"
+				) //NSV13 - Added Clockwork Hologram and Custom Hologram
 
 			input = input("Please select a hologram:") as null|anything in sortList(icon_list)
 			if(input)
 				qdel(holo_icon)
 				switch(input)
+					//NSV13 - AI Custom Holographic Form - Start
+					if("custom")
+						if(client?.prefs?.custom_holoform_icon)
+							holo_icon = client.prefs.get_filtered_holoform(HOLOFORM_FILTER_AI)
+						else
+							holo_icon = getHologramIcon(icon('icons/mob/ai.dmi', "default"))
+					//NSV13 - AI Custom Holographic Form - Stop
 					if("xeno queen")
 						holo_icon = getHologramIcon(icon(icon_list[input],"alienq"))
 					else
@@ -975,16 +999,11 @@
 	if(oldname != real_name)
 		if(eyeobj)
 			eyeobj.name = "[newname] (AI Eye)"
+			modularInterface.saved_identification = real_name
 
 		// Notify Cyborgs
 		for(var/mob/living/silicon/robot/Slave in connected_robots)
 			Slave.show_laws()
-
-/mob/living/silicon/ai/replace_identification_name(oldname,newname)
-	if(aiPDA)
-		aiPDA.owner = newname
-		aiPDA.name = newname + " (" + aiPDA.ownjob + ")"
-
 
 /mob/living/silicon/ai/proc/add_malf_picker()
 	to_chat(src, "In the top right corner of the screen you will find the Malfunctions tab, where you can purchase various abilities, from upgraded surveillance to station ending doomsday devices.")

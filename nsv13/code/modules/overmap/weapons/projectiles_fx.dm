@@ -1,3 +1,8 @@
+
+///Special proc for hitting overmap ships only used by NSV projectiles.
+/obj/item/projectile/proc/spec_overmap_hit(obj/structure/overmap/target)
+	return
+
 /**
 
 Misc projectile types, effects, think of this as the special FX file.
@@ -36,6 +41,7 @@ Misc projectile types, effects, think of this as the special FX file.
 	//Not easily stopped.
 	obj_integrity = 300
 	max_integrity = 300
+	can_home = TRUE
 	homing_turn_speed = 2.5
 	flag = "overmap_heavy"
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/torpedo
@@ -56,9 +62,9 @@ Misc projectile types, effects, think of this as the special FX file.
 	. = ..()
 	base_piercing_type = projectile_piercing
 	if(homing_benefit_time)
-		addtimer(CALLBACK(src, .proc/stop_homing), homing_benefit_time)
+		addtimer(CALLBACK(src, PROC_REF(stop_homing)), homing_benefit_time)
 	else
-		addtimer(CALLBACK(src, .proc/stop_homing), 0.2 SECONDS)	//Because all deck guns apparently have slight homing.
+		addtimer(CALLBACK(src, PROC_REF(stop_homing)), 0.2 SECONDS)	//Because all deck guns apparently have slight homing.
 
 /obj/item/projectile/bullet/proc/stop_homing()
 	homing = FALSE
@@ -329,7 +335,7 @@ Misc projectile types, effects, think of this as the special FX file.
 	damage = 20
 	spread = 90
 	flag = "overmap_medium"
-	
+
 /obj/item/projectile/bullet/prototype_bsa
 	icon_state = "proto_bsa"
 	name = "Prototype BSA Round"
@@ -343,7 +349,7 @@ Misc projectile types, effects, think of this as the special FX file.
 /obj/item/projectile/guided_munition
 	obj_integrity = 50
 	max_integrity = 50
-	density = TRUE
+	can_home = TRUE
 	armor = list("overmap_light" = 10, "overmap_medium" = 0, "overmap_heavy" = 0)
 
 /obj/item/projectile/guided_munition/torpedo
@@ -427,13 +433,14 @@ Misc projectile types, effects, think of this as the special FX file.
 /obj/item/projectile/guided_munition/torpedo/dud
 	icon_state = "torpedo_dud"
 	damage = 0
+	can_home = FALSE
 
 /obj/item/projectile/guided_munition/Initialize(mapload)
 	. = ..()
-	addtimer(CALLBACK(src, .proc/windup), 1 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(windup)), 1 SECONDS)
 
 	var/static/list/loc_connections = list(
-		COMSIG_ATOM_ENTERED = .proc/on_entered,
+		COMSIG_ATOM_ENTERED = PROC_REF(on_entered),
 	)
 	AddElement(/datum/element/connect_loc, loc_connections)
 
@@ -474,7 +481,6 @@ Misc projectile types, effects, think of this as the special FX file.
 	if(!check_faction(target))
 		return FALSE 	 //Nsv13 - faction checking for overmaps. We're gonna just cut off real early and save some math if the IFF doesn't check out.
 	if(isovermap(target)) //Were we to explode on an actual overmap, this would oneshot the ship as it's a powerful explosion.
-		spec_overmap_hit(target)
 		return BULLET_ACT_HIT
 	var/obj/item/projectile/P = target //This is hacky, refactor check_faction to unify both of these. I'm bodging it for now.
 	if(isprojectile(target) && P.faction != faction && !P.nodamage) //Because we could be in the same faction and collide with another bullet. Let's not blow ourselves up ok?
@@ -491,9 +497,6 @@ Misc projectile types, effects, think of this as the special FX file.
 	else
 		return FALSE
 	return BULLET_ACT_HIT
-
-/obj/item/projectile/guided_munition/proc/spec_overmap_hit(obj/structure/overmap/target)
-	return
 
 /obj/item/projectile/guided_munition/torpedo/disruptor/spec_overmap_hit(obj/structure/overmap/target)
 	if(length(target.occupying_levels))
@@ -517,7 +520,7 @@ Misc projectile types, effects, think of this as the special FX file.
 	if(target.ai_controlled || istype(target, /obj/structure/overmap/small_craft))
 		target.hullburn += 60	//hullburn DoT for AIs. Player Fighters get it too, did you expect to just eat one of these?
 		target.hullburn_power = max(target.hullburn_power, 6)
-	
+
 
 /obj/item/projectile/guided_munition/bullet_act(obj/item/projectile/P)
 	. = ..()
@@ -561,6 +564,12 @@ Misc projectile types, effects, think of this as the special FX file.
 	muzzle_type = /obj/effect/projectile/muzzle/disabler
 	impact_type = /obj/effect/projectile/impact/disabler
 
+/obj/item/projectile/beam/laser/phaser/pd
+	name = "point defense phaser"
+	damage = 60 // Doesn't scale with power input, but fires fairly quickly especially when upgraded
+	icon = 'nsv13/icons/obj/projectiles_nsv.dmi'
+	icon_state = "pdphaser"
+
 /obj/item/projectile/beam/laser/point_defense
 	name = "laser pointer"
 	damage = 30
@@ -577,3 +586,21 @@ Misc projectile types, effects, think of this as the special FX file.
 /obj/item/projectile/beam/laser/phaser
 	damage = 30
 	flag = "overmap_medium"
+
+/obj/item/projectile/bullet/broadside
+	name = "broadside shell"
+	icon = 'nsv13/icons/obj/projectiles_nsv.dmi'
+	icon_state = "broadside"
+	damage = 125
+	obj_integrity = 500
+	flag = "overmap_heavy"
+	spread = 15
+	speed = 1
+
+/obj/item/projectile/bullet/broadside/plasma
+	name = "plasma-packed broadside shell"
+	icon = 'nsv13/icons/obj/projectiles_nsv.dmi'
+	icon_state = "broadside_plasma"
+	damage = 175
+	armour_penetration = 10
+	speed = 0.4

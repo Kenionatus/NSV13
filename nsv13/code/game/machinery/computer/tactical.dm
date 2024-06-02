@@ -7,7 +7,8 @@
 	circuit = /obj/item/circuitboard/computer/ship/tactical_computer
 
 /obj/machinery/computer/ship/tactical/Destroy()
-	linked?.tactical = null
+	if(linked && linked.tactical == src)
+		linked.tactical = null
 	return ..()
 
 /obj/machinery/computer/ship/tactical/ui_interact(mob/user, datum/tgui/ui)
@@ -47,15 +48,28 @@
 	if(!linked)
 		return
 	switch(action)
-		if("target_lock")
-			linked.target_lock = null
-		if("target_ship")
-			var/target_name = params["target"]
-			if(!linked?.current_system)
+		if("toggle_gun_camera")
+			if(linked.no_gun_cam)
 				return
-			for(var/obj/structure/overmap/OM in linked.current_system.system_contents)
+			if(linked.target_lock)
+				var/scan_range = linked.dradis ? linked.dradis.visual_range : SENSOR_RANGE_DEFAULT
+				if(overmap_dist(linked, linked.target_lock) > scan_range)
+					to_chat(linked.gunner, "<span class='warning'>Target out of visual acquisition range.</span>")
+					return
+				linked.update_gunner_cam(linked.target_lock)
+				return
+			linked.update_gunner_cam()
+		if("lock_ship")
+			var/target_name = params["target"]
+			for(var/obj/structure/overmap/OM in linked.target_painted) // Locking
 				if(OM.name == target_name)
-					linked.start_lockon(OM)
+					linked.select_target(OM)
+					break
+		if("dump_lock") // Clearing a target track
+			var/target_name = params["target"]
+			for(var/obj/structure/overmap/OM in linked.target_painted)
+				if(OM.name == target_name)
+					linked.dump_lock(OM)
 					break
 
 /obj/machinery/computer/ship/tactical/ui_data(mob/user)
@@ -65,6 +79,14 @@
 	data["flakrange"] = linked.get_flak_range(linked.last_target)
 	data["integrity"] = linked.obj_integrity
 	data["max_integrity"] = linked.max_integrity
+	if(istype(linked, /obj/structure/overmap/small_craft))
+		var/obj/structure/overmap/small_craft/small_ship = linked
+		var/obj/item/fighter_component/armour_plating/A = small_ship.loadout.get_slot(HARDPOINT_SLOT_ARMOUR)
+		data["has_quadrant"] = FALSE
+		data["armour_integrity"] = (A) ? A.obj_integrity : 0
+		data["max_armour_integrity"] = (A) ? A.max_integrity : 100
+	else
+		data["has_quadrant"] = TRUE
 	data["quadrant_fs_armour_current"] = linked.armour_quadrants["forward_starboard"]["current_armour"]
 	data["quadrant_fs_armour_max"] = linked.armour_quadrants["forward_starboard"]["max_armour"]
 	data["quadrant_as_armour_current"] = linked.armour_quadrants["aft_starboard"]["current_armour"]
@@ -75,7 +97,7 @@
 	data["quadrant_fp_armour_max"] = linked.armour_quadrants["forward_port"]["max_armour"]
 	data["weapons"] = list()
 	data["target_name"] = (linked.target_lock) ? linked.target_lock.name : "none"
-	var/scan_range = (linked?.dradis) ? linked.dradis.sensor_range : 45 //hide targets that are outside of sensor range to avoid cheese.
+	data["no_gun_cam"] = linked.no_gun_cam
 	for(var/datum/ship_weapon/SW_type in linked.weapon_types)
 		var/ammo = 0
 		var/max_ammo = 0
@@ -87,19 +109,22 @@
 			ammo += SW.get_ammo()
 		data["weapons"] += list(list("name" = thename, "ammo" = ammo, "maxammo" = max_ammo))
 	data["ships"] = list()
+	data["painted_targets"] = list()
+	data["target_lock"] = linked.target_lock?.name
 	if(!linked?.current_system)
 		return data
-	for(var/obj/structure/overmap/OM in linked.current_system.system_contents)
-		if(OM.z == linked.z && OM.faction != linked.faction && get_dist(linked, OM) <= scan_range && OM.is_sensor_visible(linked) >= SENSOR_VISIBILITY_TARGETABLE)
-			data["ships"] += list(list("name" = OM.name, "integrity" = OM.obj_integrity, "max_integrity" = OM.max_integrity, "faction" = OM.faction, \
-				"quadrant_fs_armour_current" = OM.armour_quadrants["forward_starboard"]["current_armour"], \
-				"quadrant_fs_armour_max" = OM.armour_quadrants["forward_starboard"]["max_armour"], \
-				"quadrant_as_armour_current" = OM.armour_quadrants["aft_starboard"]["current_armour"], \
-				"quadrant_as_armour_max" = OM.armour_quadrants["aft_starboard"]["max_armour"], \
-				"quadrant_ap_armour_current" = OM.armour_quadrants["aft_port"]["current_armour"], \
-				"quadrant_ap_armour_max" = OM.armour_quadrants["aft_port"]["max_armour"], \
-				"quadrant_fp_armour_current" = OM.armour_quadrants["forward_port"]["current_armour"], \
-				"quadrant_fp_armour_max" = OM.armour_quadrants["forward_port"]["max_armour"]))
+	for(var/obj/structure/overmap/OM in linked.target_painted)
+		if(OM.current_system != linked.current_system)
+			continue
+		data["painted_targets"] += list(list("name" = OM.name, "integrity" = OM.obj_integrity, "max_integrity" = OM.max_integrity, "faction" = OM.faction, \
+			"quadrant_fs_armour_current" = OM.armour_quadrants["forward_starboard"]["current_armour"], \
+			"quadrant_fs_armour_max" = OM.armour_quadrants["forward_starboard"]["max_armour"], \
+			"quadrant_as_armour_current" = OM.armour_quadrants["aft_starboard"]["current_armour"], \
+			"quadrant_as_armour_max" = OM.armour_quadrants["aft_starboard"]["max_armour"], \
+			"quadrant_ap_armour_current" = OM.armour_quadrants["aft_port"]["current_armour"], \
+			"quadrant_ap_armour_max" = OM.armour_quadrants["aft_port"]["max_armour"], \
+			"quadrant_fp_armour_current" = OM.armour_quadrants["forward_port"]["current_armour"], \
+			"quadrant_fp_armour_max" = OM.armour_quadrants["forward_port"]["max_armour"]))
 	return data
 
 /obj/machinery/computer/ship/tactical/set_position(obj/structure/overmap/OM)
@@ -141,6 +166,14 @@
 	data["flakrange"] = linked.get_flak_range(linked.last_target)
 	data["integrity"] = linked.obj_integrity
 	data["max_integrity"] = linked.max_integrity
+	if(istype(linked, /obj/structure/overmap/small_craft))
+		var/obj/structure/overmap/small_craft/small_ship = linked
+		var/obj/item/fighter_component/armour_plating/A = small_ship.loadout.get_slot(HARDPOINT_SLOT_ARMOUR)
+		data["has_quadrant"] = FALSE
+		data["armour_integrity"] = (A) ? A.obj_integrity : 0
+		data["max_armour_integrity"] = (A) ? A.max_integrity : 100
+	else
+		data["has_quadrant"] = TRUE // I'm uncertain about whether or not we have ANY small crafts that have armor quadrants so I'm making it like this instead.
 	data["quadrant_fs_armour_current"] = linked.armour_quadrants["forward_starboard"]["current_armour"]
 	data["quadrant_fs_armour_max"] = linked.armour_quadrants["forward_starboard"]["max_armour"]
 	data["quadrant_as_armour_current"] = linked.armour_quadrants["aft_starboard"]["current_armour"]
@@ -174,20 +207,20 @@
 		data["torpedo_ammo_max"] = 1
 
 	data["target_name"] = (linked.target_lock) ? linked.target_lock.name : "none"
-	var/scan_range = (linked?.dradis) ? linked.dradis.sensor_range : 45 //hide targets that are outside of sensor range to avoid cheese.
-	data["ships"] = list()
+	data["painted_targets"] = list()
+	data["no_gun_cam"] = linked.no_gun_cam
 	if(!linked?.current_system)
 		return data
-	for(var/obj/structure/overmap/OM in linked.current_system.system_contents)
-		if(OM.z == linked.z && OM.faction != linked.faction && get_dist(linked, OM) <= scan_range && OM.is_sensor_visible(linked) >= SENSOR_VISIBILITY_TARGETABLE)
-			data["ships"] += list(list("name" = OM.name, "integrity" = OM.obj_integrity, "max_integrity" = OM.max_integrity, "faction" = OM.faction, \
-				"quadrant_fs_armour_current" = OM.armour_quadrants["forward_starboard"]["current_armour"], \
-				"quadrant_fs_armour_max" = OM.armour_quadrants["forward_starboard"]["max_armour"], \
-				"quadrant_as_armour_current" = OM.armour_quadrants["aft_starboard"]["current_armour"], \
-				"quadrant_as_armour_max" = OM.armour_quadrants["aft_starboard"]["max_armour"], \
-				"quadrant_ap_armour_current" = OM.armour_quadrants["aft_port"]["current_armour"], \
-				"quadrant_ap_armour_max" = OM.armour_quadrants["aft_port"]["max_armour"], \
-				"quadrant_fp_armour_current" = OM.armour_quadrants["forward_port"]["current_armour"], \
-				"quadrant_fp_armour_max" = OM.armour_quadrants["forward_port"]["max_armour"]))
-
+	for(var/obj/structure/overmap/OM in linked.target_painted)
+		if(OM.current_system != linked.current_system)
+			continue
+		data["painted_targets"] += list(list("name" = OM.name, "integrity" = OM.obj_integrity, "max_integrity" = OM.max_integrity, "faction" = OM.faction, \
+			"quadrant_fs_armour_current" = OM.armour_quadrants["forward_starboard"]["current_armour"], \
+			"quadrant_fs_armour_max" = OM.armour_quadrants["forward_starboard"]["max_armour"], \
+			"quadrant_as_armour_current" = OM.armour_quadrants["aft_starboard"]["current_armour"], \
+			"quadrant_as_armour_max" = OM.armour_quadrants["aft_starboard"]["max_armour"], \
+			"quadrant_ap_armour_current" = OM.armour_quadrants["aft_port"]["current_armour"], \
+			"quadrant_ap_armour_max" = OM.armour_quadrants["aft_port"]["max_armour"], \
+			"quadrant_fp_armour_current" = OM.armour_quadrants["forward_port"]["current_armour"], \
+			"quadrant_fp_armour_max" = OM.armour_quadrants["forward_port"]["max_armour"]))
 	return data

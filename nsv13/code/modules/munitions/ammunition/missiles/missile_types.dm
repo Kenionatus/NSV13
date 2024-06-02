@@ -22,8 +22,8 @@
 
 /obj/item/ship_weapon/ammunition/missile/attackby(obj/item/I, mob/living/user, params)
 	. = ..()
-	if(istype(I, /obj/item/card/id/prisoner))
-		var/obj/item/card/id/prisoner/P = I
+	if(istype(I, /obj/item/card/id/gulag))
+		var/obj/item/card/id/gulag/P = I
 		P.points += claimable_gulag_points
 		to_chat(user, "<span class='boldnotice'>You claim [claimable_gulag_points] from [src]... Your balance is now: [P.points]</span>")
 		//This one's been claimed!
@@ -40,6 +40,10 @@
 /obj/item/projectile/guided_munition/missile/dud
 	icon_state = "torpedo_dud"
 	damage = 0
+	can_home = FALSE
+
+/obj/item/projectile/guided_munition/missile/dud/homing
+	can_home = TRUE
 
 /obj/item/ship_weapon/ammunition/missile/georgio
 	name = "\improper Georgio"

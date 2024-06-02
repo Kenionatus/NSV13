@@ -10,7 +10,7 @@
 /// Maximum number of windows that can be suspended/reused
 #define TGUI_WINDOW_SOFT_LIMIT 5
 /// Maximum number of open windows
-#define TGUI_WINDOW_HARD_LIMIT 9
+#define TGUI_WINDOW_HARD_LIMIT 20 //NSV13 - Increases the Window Limit to 20
 
 /// Maximum ping timeout allowed to detect zombie windows
 #define TGUI_PING_TIMEOUT 4 SECONDS
@@ -33,6 +33,11 @@
 // To ensure this is correct, this is unit tested in tgui_create_message.
 #define TGUI_CREATE_MESSAGE(type, payload) ( \
 	"%7b%22type%22%3a%22[type]%22%2c%22payload%22%3a[url_encode(json_encode(payload))]%7d" \
+)
+
+/// Creates a message packet for sending via output() with no payload
+#define TGUI_CREATE_MESSAGE_EMPTY(type) ( \
+	"%7b%22type%22%3a%22[type]%22%7d" \
 )
 
 /// Telemetry

@@ -163,14 +163,8 @@
 		registered_account.payday(1)
 
 /obj/item/card/id/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/holochip))
+	if(iscash(W))
 		insert_money(W, user)
-		return
-	else if(istype(W, /obj/item/stack/spacecash))
-		insert_money(W, user, TRUE)
-		return
-	else if(istype(W, /obj/item/coin))
-		insert_money(W, user, TRUE)
 		return
 	else if(istype(W, /obj/item/storage/bag/money))
 		var/obj/item/storage/bag/money/money_bag = W
@@ -184,7 +178,7 @@
 	else
 		return ..()
 
-/obj/item/card/id/proc/insert_money(obj/item/I, mob/user, physical_currency)
+/obj/item/card/id/proc/insert_money(obj/item/I, mob/user)
 	if(!registered_account)
 		to_chat(user, "<span class='warning'>[src] doesn't have a linked account to deposit [I] into!</span>")
 		return
@@ -194,7 +188,7 @@
 		return
 
 	registered_account.adjust_money(cash_money)
-	if(physical_currency)
+	if(istype(I, /obj/item/stack/spacecash) || istype(I, /obj/item/coin))
 		to_chat(user, "<span class='notice'>You stuff [I] into [src]. It disappears in a small puff of bluespace smoke, adding [cash_money] credits to the linked account.</span>")
 	else
 		to_chat(user, "<span class='notice'>You insert [I] into [src], adding [cash_money] credits to the linked account.</span>")
@@ -404,13 +398,13 @@ update_label("John Doe", "Clowny")
 		/obj/item/card/id/pass/mining_access_card,
 		/obj/item/card/mining_point_card,
 		/obj/item/card/id,
-		/obj/item/card/id/prisoner/one,
-		/obj/item/card/id/prisoner/two,
-		/obj/item/card/id/prisoner/three,
-		/obj/item/card/id/prisoner/four,
-		/obj/item/card/id/prisoner/five,
-		/obj/item/card/id/prisoner/six,
-		/obj/item/card/id/prisoner/seven,
+		/obj/item/card/id/gulag/one,
+		/obj/item/card/id/gulag/two,
+		/obj/item/card/id/gulag/three,
+		/obj/item/card/id/gulag/four,
+		/obj/item/card/id/gulag/five,
+		/obj/item/card/id/gulag/six,
+		/obj/item/card/id/gulag/seven,
 		/obj/item/card/id/departmental_budget,
 		/obj/item/card/id/syndicate/anyone,
 		/obj/item/card/id/syndicate/nuke_leader,
@@ -672,7 +666,7 @@ update_label("John Doe", "Clowny")
 	access = get_all_accesses()
 	. = ..()
 
-/obj/item/card/id/prisoner
+/obj/item/card/id/gulag
 	name = "prisoner ID card"
 	desc = "You are a number, you are not a free man."
 	icon_state = "orange"
@@ -684,7 +678,7 @@ update_label("John Doe", "Clowny")
 	var/permanent = FALSE
 	hud_state = JOB_HUD_PRISONER
 
-/obj/item/card/id/prisoner/examine(mob/user)
+/obj/item/card/id/gulag/examine(mob/user)
 	. = ..()
 
 	if(!permanent)
@@ -693,31 +687,31 @@ update_label("John Doe", "Clowny")
 	else
 		. += "<span class='notice'>The mark on the ID indicates the sentence is permanent.</span>"
 
-/obj/item/card/id/prisoner/one
+/obj/item/card/id/gulag/one
 	name = "Prisoner #13-001"
 	registered_name = "Prisoner #13-001"
 
-/obj/item/card/id/prisoner/two
+/obj/item/card/id/gulag/two
 	name = "Prisoner #13-002"
 	registered_name = "Prisoner #13-002"
 
-/obj/item/card/id/prisoner/three
+/obj/item/card/id/gulag/three
 	name = "Prisoner #13-003"
 	registered_name = "Prisoner #13-003"
 
-/obj/item/card/id/prisoner/four
+/obj/item/card/id/gulag/four
 	name = "Prisoner #13-004"
 	registered_name = "Prisoner #13-004"
 
-/obj/item/card/id/prisoner/five
+/obj/item/card/id/gulag/five
 	name = "Prisoner #13-005"
 	registered_name = "Prisoner #13-005"
 
-/obj/item/card/id/prisoner/six
+/obj/item/card/id/gulag/six
 	name = "Prisoner #13-006"
 	registered_name = "Prisoner #13-006"
 
-/obj/item/card/id/prisoner/seven
+/obj/item/card/id/gulag/seven
 	name = "Prisoner #13-007"
 	registered_name = "Prisoner #13-007"
 

@@ -9,6 +9,7 @@
 	var/reroute_deflection = FALSE //Delete the bullet, or actually deflect it in some direction?
 	var/block_chance = 0 //Chance to block melee attacks using items while on throw mode.
 	var/restraining = 0 //used in cqc's disarm_act to check if the disarmed is being restrained and so whether they should be put in a chokehold or not
+	var/armlockstate = 0 //used in jujitsu grab after hand armlock move
 	var/help_verb
 	var/no_guns = FALSE
 	var/allow_temp_override = TRUE //if this martial art can be overridden by temporary martial arts
@@ -73,7 +74,7 @@
 	log_combat(A, D, "punched")
 
 	if(!(D.mobility_flags & MOBILITY_STAND))
-		D.forcesay(GLOB.hit_appends)
+		D.force_say(A)
 	return 1
 
 /datum/martial_art/proc/teach(mob/living/carbon/human/H,make_temporary=0)

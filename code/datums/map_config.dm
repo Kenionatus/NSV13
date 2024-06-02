@@ -26,7 +26,17 @@
 	var/list/omode_blacklist = list() //NSV13 - Blacklisted overmap modes - ie remove modes
 	var/list/omode_whitelist = list() //NSV13 - Whitelisted overmap modes - ie add modes
 	var/starmap_path = CONFIG_DIRECTORY + "/" + STARMAP_FILE //NSV13 - What starmap should this map load?
+	var/return_system = "Outpost 45" //NSV13 - Which system are we jumping back to when the round ends?
 	var/mine_traits = null
+
+	//NSV13 - special mapvote things
+	var/map_description = "No data"
+	var/manufacturer = "No data"
+	var/mapper = "No data"
+	var/commission_date = "No data"
+	var/list/strengths
+	var/list/weaknesses
+	var/list/equipment
 
 	var/traits = list(
 		list(
@@ -62,8 +72,6 @@
 	if (!config.LoadConfig(filename, error_if_missing))
 		qdel(config)
 		config = new /datum/map_config  // Fall back to Box
-		//config.LoadConfig(config.config_filename)
-	else if (delete_after)
 	else if (delete_after)
 		fdel(filename)
 	return config
@@ -181,6 +189,28 @@
 		omode_whitelist = json["omode_whitelist"]
 	if("starmap_path" in json)
 		starmap_path = json["starmap_path"]
+	if("return_system" in json)
+		starmap_path = json["return_system"]
+	if("map_description" in json)
+		map_description = json["map_description"]
+	if("manufacturer" in json)
+		manufacturer = json["manufacturer"]
+	if("mapper" in json)
+		mapper = json["mapper"]
+	if("commission_date" in json)
+		commission_date = json["commission_date"]
+	if("strengths" in json)
+		strengths = json["strengths"]
+	else
+		strengths = list()
+	if("weaknesses" in json)
+		weaknesses = json["weaknesses"]
+	else
+		weaknesses = list()
+	if("equipment" in json)
+		equipment = json["equipment"]
+	else
+		equipment = list()
 
 	CHECK_EXISTS("ship_type")
 	if("ship_type" in json)

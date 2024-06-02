@@ -82,7 +82,24 @@
 					R.use(1)
 					to_chat(user, "<span class='notice'>You reinforce the floor.</span>")
 				return
-	else if(istype(C, /obj/item/stack/tile) && !locate(/obj/structure/lattice/catwalk, src))
+	if(istype(C, /obj/item/stack/sheet/plasteel) && attachment_holes)
+		if(broken || burnt)
+			to_chat(user, "<span class='warning'>Repair the plating first!</span>")
+			return
+		var/obj/item/stack/sheet/iron/R = C
+		if (R.get_amount() < 1)
+			to_chat(user, "<span class='warning'>You need one sheet to make a prison secure floor!</span>")
+			return
+		else
+			to_chat(user, "<span class='notice'>You begin reinforcing the floor to secure the plating..</span>")
+			if(do_after(user, 30, target = src))
+				if (R.get_amount() >= 1 && !istype(src, /turf/open/floor/prison))
+					PlaceOnTop(/turf/open/floor/prison, flags = CHANGETURF_INHERIT_AIR)
+					playsound(src, 'sound/items/deconstruct.ogg', 80, 1)
+					R.use(1)
+					to_chat(user, "<span class='notice'>You secure the plating.</span>")
+				return
+	else if(istype(C, /obj/item/stack/tile))//NSV allow placing tiles under open plated catwalks
 		if(!broken && !burnt)
 			for(var/obj/O in src)
 				if(O.level == 1) //ex. pipes laid underneath a tile
@@ -169,9 +186,4 @@
 	return
 
 /turf/open/floor/plating/can_have_cabling()
-	// NSV13 - let us put cables into open plated catwalk tiles
-	var/obj/structure/lattice/catwalk/C = locate(/obj/structure/lattice/catwalk, src)
-	if(C)
-		return C.can_lay_cable()
-	return 1
-
+	return TRUE//NSV don't need this check now that catwalks block clicking

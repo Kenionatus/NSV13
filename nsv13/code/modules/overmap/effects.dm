@@ -15,3 +15,15 @@
 	duration = 5 SECONDS
 	pixel_x = -96
 	pixel_y = -96
+
+/obj/effect/particle_effect/phoron_explosion
+	name = "phoron explosion"
+	icon = 'nsv13/icons/overmap/effects.dmi'
+	icon_state = "phoron_explosion"
+	opacity = 1
+	anchored = TRUE
+
+/obj/effect/particle_effect/phoron_explosion/Initialize(mapload)
+	. = ..()
+	QDEL_IN(src, 1.5 SECONDS)
+

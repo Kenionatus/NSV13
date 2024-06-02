@@ -63,6 +63,8 @@
 		if(GLOB.revdata.testmerge.len)
 			message += "<br>The following experimental changes are active and are probably the cause of any new or sudden issues you may experience. If possible, please try to find a specific thread for your issue instead of posting to the general issue tracker:<br>"
 			message += GLOB.revdata.GetTestMergeInfo(FALSE)
+		// We still use tgalert here because some people were concerned that if someone wanted to report that tgui wasn't working
+		// then the report issue button being tgui-based would be problematic.
 		if(tgalert(src, message, "Report Issue","Yes","No")!="Yes")
 			return
 		var/static/issue_template = rustg_file_read(".github/ISSUE_TEMPLATE.md")
@@ -262,6 +264,13 @@ Any-Mode: (hotkey doesn't need to be on)
 	else if(SSmapping.config.map_link)
 		if(alert("This will open the current map in your browser. Are you sure?",,"Yes","No")!="Yes")
 			return
-		src << link("https://affectedarc07.github.io/SS13WebMap/NSV13/[SSmapping.config.map_link]")
+		src << link("https://webmap.affectedarc07.co.uk/maps/nsv/[SSmapping.config.map_link]")
 	else
 		to_chat(src, "<span class='danger'>The current map is either invalid or unavailable. Open an issue on the github. </span>")
+
+//NSV13 - alias to "map"
+/client/verb/nsv13_map()
+	set name = "Map"
+	set desc = "View the current map in the webviewer"
+	set hidden = 1
+	map()

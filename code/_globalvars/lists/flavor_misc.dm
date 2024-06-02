@@ -38,12 +38,20 @@ GLOBAL_LIST_EMPTY(wings_list)
 GLOBAL_LIST_EMPTY(wings_open_list)
 GLOBAL_LIST_EMPTY(r_wings_list)
 GLOBAL_LIST_EMPTY(moth_wings_list)
+GLOBAL_LIST_EMPTY(moth_wings_roundstart_list)//this lacks the blacklisted wings such as burned, clockwork and angel
+GLOBAL_LIST_EMPTY(moth_antennae_list)
+GLOBAL_LIST_EMPTY(moth_antennae_roundstart_list)//this lacks the blacklisted antennae such as burned, clockwork and angel
+GLOBAL_LIST_EMPTY(moth_markings_list)
+GLOBAL_LIST_EMPTY(moth_markings_roundstart_list)//this lacks the blacklisted markings such as burned, clockwork and angel
 GLOBAL_LIST_EMPTY(moth_wingsopen_list)
 GLOBAL_LIST_EMPTY(caps_list)
 GLOBAL_LIST_EMPTY(ipc_screens_list)
 GLOBAL_LIST_EMPTY(ipc_antennas_list)
 GLOBAL_LIST_EMPTY(ipc_chassis_list)
 GLOBAL_LIST_EMPTY(insect_type_list)
+GLOBAL_LIST_EMPTY(apid_antenna_list)
+GLOBAL_LIST_EMPTY(apid_stripes_list)
+GLOBAL_LIST_EMPTY(apid_headstripes_list)
 
 GLOBAL_LIST_INIT(color_list_ethereal, list(
 	"Red" = "ff3131",
@@ -139,9 +147,6 @@ GLOBAL_LIST_INIT(uplink_spawn_loc_list_save, list(UPLINK_PDA, UPLINK_RADIO, UPLI
 
 	//Female Uniforms
 GLOBAL_LIST_EMPTY(female_clothing_icons)
-
-	//radical shit
-GLOBAL_LIST_INIT(hit_appends, list("-OOF", "-ACK", "-UGH", "-HRNK", "-HURGH", "-GLORF"))
 
 GLOBAL_LIST_INIT(scarySounds, list('sound/weapons/thudswoosh.ogg','sound/weapons/taser.ogg','sound/weapons/armbomb.ogg','sound/voice/hiss1.ogg','sound/voice/hiss2.ogg','sound/voice/hiss3.ogg','sound/voice/hiss4.ogg','sound/voice/hiss5.ogg','sound/voice/hiss6.ogg','sound/effects/glassbr1.ogg','sound/effects/glassbr2.ogg','sound/effects/glassbr3.ogg','sound/items/welder.ogg','sound/items/welder2.ogg','sound/machines/airlock.ogg','sound/effects/clownstep1.ogg','sound/effects/clownstep2.ogg'))
 

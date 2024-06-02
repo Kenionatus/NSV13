@@ -137,7 +137,7 @@
 
 /turf/open/floor/holofloor/carpet/Initialize(mapload)
 	. = ..()
-	addtimer(CALLBACK(src, /atom/.proc/update_icon), 1)
+	addtimer(CALLBACK(src, TYPE_PROC_REF(/atom, update_icon)), 1)
 
 /turf/open/floor/holofloor/carpet/update_icon()
 	. = ..()
@@ -179,3 +179,18 @@
 	name = "white floor"
 	desc = "A tile in a pure white color."
 	icon_state = "pure_white"
+
+/turf/open/floor/holofloor/monotile/dark
+	name = "dark holotile"
+	desc = "A really big dark steel holotile."
+	icon_state = "monotile_dark"
+
+/turf/open/floor/holofloor/monotile/steel
+	name = "steel holotile"
+	desc = "A really big steel holotile."
+	icon_state = "steel_monotile"
+
+/turf/open/floor/holofloor/monotile/light
+	name = "light holotile"
+	desc = "A really big light steel holotile."
+	icon_state = "monotile_light"

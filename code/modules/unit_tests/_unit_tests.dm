@@ -45,6 +45,7 @@
 
 #include "achievement_validation.dm"
 #include "anchored_mobs.dm"
+#include "async.dm"
 #include "check_adjustable_clothing.dm"
 #include "component_tests.dm"
 #include "connect_loc.dm"
@@ -57,8 +58,10 @@
 #include "create_and_destroy.dm"
 #endif
 
+#include "antag_datums.dm"
 #include "dynamic_ruleset_sanity.dm"
 #include "keybinding_init.dm"
+#include "gamemode_sanity.dm"
 #include "reagent_id_typos.dm"
 #include "reagent_recipe_collisions.dm"
 #include "spawn_humans.dm"
@@ -74,6 +77,7 @@
 #include "unit_test.dm"
 #include "random_ruin_mapsize.dm"
 #include "ftl.dm" // NSV13 FTL unit tests
+#include "get_overmap.dm" // NSV13 get_overmap unit tests
 
 #ifdef REFERENCE_TRACKING_DEBUG //Don't try and parse this file if ref tracking isn't turned on. IE: don't parse ref tracking please mr linter
 #include "find_reference_sanity.dm"

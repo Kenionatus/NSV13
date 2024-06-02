@@ -84,7 +84,7 @@ Starting Materials
 		1000000, FALSE, /obj/item/stack, null, null, FALSE)
 
 	OM = get_overmap()
-	addtimer(CALLBACK(src, .proc/handle_linking), 30 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(handle_linking)), 30 SECONDS)
 
 /obj/machinery/armour_plating_nanorepair_well/examine(mob/user)
 	.=..()
@@ -352,20 +352,16 @@ Starting Materials
 		ui.set_autoupdate(TRUE)
 
 /obj/machinery/armour_plating_nanorepair_well/ui_act(action, params, datum/tgui/ui)
-	if(..())
+	. = ..()
+	if(.)
 		return
-	if(!(in_range(src, usr) | IsAdminGhost(usr)))
+	if(!(in_range(src, usr) || IsAdminGhost(usr)))
 		return
 	var/adjust = text2num(params["adjust"])
 	if(action == "power_allocation")
-		if(adjust && isnum(adjust))
-			power_allocation = adjust
-			if(power_allocation > maximum_power_allocation)
-				power_allocation = maximum_power_allocation
-				return
-			if(power_allocation < 0)
-				power_allocation = 0
-				return
+		if(isnum(adjust))
+			power_allocation = CLAMP(adjust, 0, maximum_power_allocation)
+			return TRUE
 	switch(action)
 		if("iron")
 			if(material_tier != 0)
@@ -375,6 +371,7 @@ Starting Materials
 				return
 			else
 				material_tier = 1
+				. = TRUE
 
 		if("plasteel")
 			if(material_tier != 0)
@@ -384,6 +381,7 @@ Starting Materials
 				return
 			else
 				material_tier = 2
+				. = TRUE
 
 		if("ferrotitanium")
 			if(material_tier != 0)
@@ -393,6 +391,7 @@ Starting Materials
 				return
 			else
 				material_tier = 3
+				. = TRUE
 
 		if("durasteel")
 			if(material_tier != 0)
@@ -402,6 +401,7 @@ Starting Materials
 				return
 			else
 				material_tier = 4
+				. = TRUE
 
 		if("duranium")
 			if(material_tier != 0)
@@ -411,6 +411,7 @@ Starting Materials
 				return
 			else
 				material_tier = 5
+				. = TRUE
 
 		if("purge")
 			if(resourcing_system)
@@ -431,6 +432,7 @@ Starting Materials
 				var/current_temp = env.return_temperature()
 				env.set_temperature(current_temp + 25)
 				air_update_turf()
+				. = TRUE
 
 		if("unload")
 			if(resourcing_system)
@@ -441,6 +443,7 @@ Starting Materials
 			else
 				var/datum/component/material_container/materials = GetComponent(/datum/component/material_container)
 				materials.retrieve_all(get_turf(usr))
+				. = TRUE
 
 		if("toggle")
 			if(material_tier == 0)
@@ -449,6 +452,7 @@ Starting Materials
 				playsound(src, sound, 100, 1)
 			else
 				resourcing_system = !resourcing_system
+				. = TRUE
 
 /obj/machinery/armour_plating_nanorepair_well/ui_data(mob/user)
 	var/datum/component/material_container/materials = GetComponent(/datum/component/material_container)

@@ -53,11 +53,11 @@ and clear when youre done! if you dont i will use :newspaper2: on you
 	var/area/holodeck/linked
 
 	///what program is loaded right now or is about to be loaded
-	var/program = "offline"
+	var/program = "recreational-offline"
 	var/last_program
 
 	///the default program loaded by this holodeck when spawned and when deactivated
-	var/offline_program = "offline"
+	var/offline_program = "recreational-offline"
 
 	///stores all of the unrestricted holodeck map templates that this computer has access to
 	var/list/program_cache
@@ -65,7 +65,7 @@ and clear when youre done! if you dont i will use :newspaper2: on you
 	var/list/emag_programs
 
 	///subtypes of this (but not this itself) are loadable programs
-	var/program_type = /datum/map_template/holodeck
+	var/program_type = /datum/map_template/holodeck/recreation
 
 	///every holo object created by the holodeck goes in here to track it
 	var/list/spawned = list()
@@ -231,7 +231,7 @@ and clear when youre done! if you dont i will use :newspaper2: on you
 
 	spawned = template.created_atoms //populate the spawned list with the atoms belonging to the holodeck
 
-	if(istype(template, /datum/map_template/holodeck/thunderdome1218) && !SSshuttle.shuttle_purchase_requirements_met[SHUTTLE_UNLOCK_MEDISIM])
+	if(istype(template, /datum/map_template/holodeck/recreation/thunderdome1218) && !SSshuttle.shuttle_purchase_requirements_met[SHUTTLE_UNLOCK_MEDISIM])
 		say("Special note from \"1218 AD\" developer: I see you too are interested in the REAL dark ages of humanity! I've made this program also unlock some interesting shuttle designs on any communication console around. Have fun!")
 		SSshuttle.shuttle_purchase_requirements_met[SHUTTLE_UNLOCK_MEDISIM] = TRUE
 
@@ -245,7 +245,7 @@ and clear when youre done! if you dont i will use :newspaper2: on you
 			spawned -= holo_atom
 			continue
 
-		RegisterSignal(holo_atom, COMSIG_PARENT_PREQDELETED, .proc/remove_from_holo_lists)
+		RegisterSignal(holo_atom, COMSIG_PARENT_PREQDELETED, PROC_REF(remove_from_holo_lists))
 		holo_atom.flags_1 |= HOLOGRAM_1
 
 		if(isholoeffect(holo_atom))//activates holo effects and transfers them from the spawned list into the effects list
@@ -255,10 +255,10 @@ and clear when youre done! if you dont i will use :newspaper2: on you
 			var/atom/holo_effect_product = holo_effect.activate(src)//change name
 			if(istype(holo_effect_product))
 				spawned += holo_effect_product // we want mobs or objects spawned via holoeffects to be tracked as objects
-				RegisterSignal(holo_effect_product, COMSIG_PARENT_PREQDELETED, .proc/remove_from_holo_lists)
+				RegisterSignal(holo_effect_product, COMSIG_PARENT_PREQDELETED, PROC_REF(remove_from_holo_lists))
 			if(islist(holo_effect_product))
 				for(var/atom/atom_product as anything in holo_effect_product)
-					RegisterSignal(atom_product, COMSIG_PARENT_PREQDELETED, .proc/remove_from_holo_lists)
+					RegisterSignal(atom_product, COMSIG_PARENT_PREQDELETED, PROC_REF(remove_from_holo_lists))
 			continue
 
 		if(isobj(holo_atom))
@@ -335,7 +335,7 @@ and clear when youre done! if you dont i will use :newspaper2: on you
 
 	if(toggleOn)
 		if(last_program && (last_program != offline_program))
-			addtimer(CALLBACK(src,.proc/load_program, last_program, TRUE), 25)
+			addtimer(CALLBACK(src,PROC_REF(load_program), last_program, TRUE), 25)
 		active = TRUE
 	else
 		last_program = program
@@ -344,7 +344,7 @@ and clear when youre done! if you dont i will use :newspaper2: on you
 
 /obj/machinery/computer/holodeck/power_change()
 	. = ..()
-	INVOKE_ASYNC(src, .proc/toggle_power, !machine_stat)
+	INVOKE_ASYNC(src, PROC_REF(toggle_power), !machine_stat)
 
 ///shuts down the holodeck and force loads the offline_program
 /obj/machinery/computer/holodeck/proc/emergency_shutdown()

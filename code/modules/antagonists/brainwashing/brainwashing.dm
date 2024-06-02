@@ -28,7 +28,7 @@
 
 /datum/antagonist/brainwashed
 	name = "Brainwashed Victim"
-	job_rank = ROLE_BRAINWASHED
+	banning_key = ROLE_BRAINWASHED
 	roundend_category = "brainwashed victims"
 	show_in_antagpanel = TRUE
 	antagpanel_category = "Other"
@@ -88,7 +88,7 @@
 			log_objective(C, objective, admin)
 	while(alert(admin,"Add another objective?","More Brainwashing","Yes","No") == "Yes")
 
-	if(alert(admin,"Confirm Brainwashing?","Are you sure?","Yes","No") == "No")
+	if(alert(admin,"Confirm Brainwashing?","Are you sure?","Yes","No") != "Yes")
 		return
 
 	if(!LAZYLEN(objectives))

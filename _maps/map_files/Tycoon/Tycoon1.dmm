@@ -108,7 +108,7 @@
 /obj/structure/cable{
 	icon_state = "4-8"
 	},
-/turf/open/floor/monotile/steel,
+/turf/open/floor/monotile/dark,
 /area/nsv/hanger/deck3{
 	name = "Air traffic control pod"
 	})
@@ -310,6 +310,7 @@
 	department = "Captain's Desk";
 	departmentType = 5;
 	name = "Captain RC";
+	payment_department = "CIV";
 	pixel_y = 26
 	},
 /turf/open/floor/monotile/steel,
@@ -375,6 +376,9 @@
 /area/crew_quarters/heads/captain)
 "bg" = (
 /obj/structure/closet/secure_closet/captains,
+/obj/machinery/light{
+	dir = 4
+	},
 /turf/open/floor/carpet/ship,
 /area/crew_quarters/heads/captain)
 "bh" = (
@@ -406,7 +410,7 @@
 /obj/machinery/atmospherics/pipe/manifold/scrubbers/hidden/layer4{
 	dir = 1
 	},
-/turf/open/floor/monotile/steel,
+/turf/open/floor/monotile/dark,
 /area/nsv/hanger/deck3{
 	name = "Air traffic control pod"
 	})
@@ -615,6 +619,11 @@
 	},
 /obj/machinery/light{
 	dir = 1
+	},
+/obj/machinery/requests_console{
+	department = "Pilot Ready Room";
+	payment_department = "MUN";
+	pixel_x = 30
 	},
 /turf/open/floor/monotile/steel,
 /area/nsv/hanger/deck3{
@@ -1437,7 +1446,7 @@
 /obj/machinery/atmospherics/pipe/layer_manifold{
 	dir = 4
 	},
-/turf/open/floor/plating,
+/turf/open/floor/monotile/dark/airless,
 /area/quartermaster/miningdock)
 "dV" = (
 /obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer4{
@@ -1465,7 +1474,6 @@
 "dX" = (
 /obj/structure/table/reinforced,
 /obj/item/storage/lockbox/medal,
-/obj/machinery/camera/autoname,
 /turf/open/floor/carpet/ship,
 /area/crew_quarters/heads/captain)
 "dY" = (
@@ -1577,8 +1585,8 @@
 /area/hallway/nsv/deck1/hallway)
 "ej" = (
 /obj/machinery/camera/motion{
-	dir = 1;
-	c_tag = "Core SW"
+	c_tag = "Core SW";
+	dir = 1
 	},
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
@@ -1859,6 +1867,7 @@
 	department = "Executive Officer's Desk";
 	departmentType = 5;
 	name = "Executive Officer RC";
+	payment_department = "CIV";
 	pixel_y = 26
 	},
 /turf/open/floor/monotile/steel,
@@ -1971,7 +1980,7 @@
 	name = "Executive officer's Office"
 	})
 "fi" = (
-/obj/machinery/vending/cart,
+/obj/machinery/vending/job_disk,
 /obj/machinery/keycard_auth{
 	pixel_x = -26
 	},
@@ -2365,10 +2374,6 @@
 	},
 /turf/closed/wall/ship,
 /area/hallway/nsv/deck1/hallway)
-"fZ" = (
-/obj/effect/turf_decal/ship/delivery/yellow,
-/turf/open/floor/monotile/steel,
-/area/hallway/nsv/deck1/hallway)
 "ga" = (
 /obj/structure/sign/ship/deck{
 	dir = 4
@@ -2534,11 +2539,12 @@
 /turf/open/floor/monotile/dark,
 /area/hallway/primary/aft)
 "gs" = (
-/obj/machinery/light{
-	dir = 8
+/obj/machinery/flasher{
+	id = "AI";
+	pixel_x = 23;
+	pixel_y = -23
 	},
-/obj/structure/table/reinforced,
-/turf/open/floor/monotile/dark,
+/turf/open/floor/circuit,
 /area/ai_monitored/turret_protected/aisat)
 "gt" = (
 /obj/structure/disposalpipe/segment,
@@ -3388,7 +3394,7 @@
 /obj/machinery/atmospherics/pipe/layer_manifold{
 	dir = 4
 	},
-/turf/open/floor/plasteel/grid/steel,
+/turf/open/floor/monotile/dark/airless,
 /area/nsv/hanger/deck3{
 	name = "Air traffic control pod"
 	})
@@ -5182,7 +5188,7 @@
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2{
 	dir = 8
 	},
-/turf/open/floor/plasteel/grid/steel,
+/turf/open/floor/monotile/steel,
 /area/nsv/hanger/deck3{
 	name = "Air traffic control pod"
 	})
@@ -5690,13 +5696,12 @@
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "nd" = (
-/obj/structure/chair/office{
-	dir = 8
-	},
 /obj/structure/cable{
 	icon_state = "4-8"
 	},
-/turf/open/floor/durasteel/eris_techfloor_alt,
+/obj/machinery/porta_turret/ai,
+/obj/effect/turf_decal/stripes/box,
+/turf/open/floor/circuit/red,
 /area/ai_monitored/turret_protected/aisat)
 "nf" = (
 /obj/effect/landmark/start/ai,
@@ -5752,16 +5757,12 @@
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
 "ng" = (
-/obj/structure/table/reinforced,
-/obj/machinery/camera/autoname{
-	dir = 4;
-	c_tag = "Core W"
-	},
-/turf/open/floor/monotile/dark,
-/area/ai_monitored/turret_protected/aisat)
-"ni" = (
 /obj/machinery/ai_slipper,
 /turf/open/floor/circuit,
+/area/ai_monitored/turret_protected/aisat)
+"ni" = (
+/obj/machinery/blackbox_recorder,
+/turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
 "nj" = (
 /obj/effect/turf_decal/bot_white,
@@ -5772,10 +5773,8 @@
 /turf/open/floor/monotile/dark,
 /area/space/nearstation)
 "nl" = (
-/obj/machinery/light{
-	dir = 8
-	},
-/turf/open/floor/monotile/dark/airless,
+/obj/machinery/light/floor,
+/turf/open/floor/engine/airless,
 /area/space/nearstation)
 "nm" = (
 /obj/effect/turf_decal/delivery/white,
@@ -5807,8 +5806,11 @@
 /turf/open/floor/monotile/dark/airless,
 /area/space/nearstation)
 "nr" = (
-/obj/effect/turf_decal/stripes/line{
-	dir = 9
+/obj/effect/turf_decal/bot_white,
+/obj/structure/ship_weapon/artillery_frame{
+	dir = 4;
+	pixel_x = -30;
+	pixel_y = -42
 	},
 /turf/open/floor/engine/airless,
 /area/space/nearstation)
@@ -5998,6 +6000,7 @@
 /obj/machinery/atmospherics/pipe/manifold/scrubbers/hidden/layer4{
 	dir = 1
 	},
+/obj/effect/turf_decal/tile/neutral/tile_full,
 /turf/open/floor/monotile/dark,
 /area/quartermaster/miningdock)
 "oW" = (
@@ -6132,8 +6135,8 @@
 /area/space/nearstation)
 "qB" = (
 /obj/machinery/camera/autoname{
-	dir = 8;
-	c_tag = "Core E"
+	c_tag = "Core E";
+	dir = 8
 	},
 /turf/open/floor/circuit,
 /area/ai_monitored/turret_protected/aisat)
@@ -6280,6 +6283,7 @@
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2{
 	dir = 4
 	},
+/obj/effect/turf_decal/tile/neutral/tile_full,
 /turf/open/floor/monotile/dark,
 /area/quartermaster/miningdock)
 "sj" = (
@@ -6458,6 +6462,7 @@
 /area/quartermaster/miningdock)
 "vf" = (
 /obj/structure/table/reinforced,
+/obj/item/storage/toolbox/mechanical,
 /turf/open/floor/monotile/steel,
 /area/hallway/nsv/deck1/hallway)
 "vi" = (
@@ -6494,8 +6499,10 @@
 	dir = 1
 	},
 /obj/effect/landmark/zebra_interlock_point,
-/obj/machinery/turnstile/xo,
 /obj/effect/turf_decal/loading_area{
+	dir = 1
+	},
+/obj/machinery/turnstile/xo{
 	dir = 1
 	},
 /turf/open/floor/monotile/steel,
@@ -6522,30 +6529,13 @@
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "vW" = (
-/obj/structure/table/reinforced,
-/obj/machinery/camera/autoname{
-	dir = 4
-	},
-/obj/item/paper_bin,
-/obj/machinery/power/apc/highcap/fifteen_k{
-	auto_name = 1;
-	dir = 8;
-	pixel_x = -24
-	},
 /obj/structure/cable{
-	icon_state = "0-4"
+	icon_state = "4-8"
 	},
-/obj/machinery/newscaster/security_unit{
-	pixel_x = -32;
-	pixel_y = 32
+/obj/structure/chair/office{
+	dir = 8
 	},
-/obj/machinery/requests_console{
-	department = "AI";
-	departmentType = 5;
-	pixel_x = -30;
-	pixel_y = -30
-	},
-/turf/open/floor/monotile/dark,
+/turf/open/floor/durasteel/eris_techfloor_alt,
 /area/ai_monitored/turret_protected/aisat)
 "wk" = (
 /obj/machinery/camera/autoname{
@@ -6708,7 +6698,7 @@
 	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/layer_manifold,
-/turf/open/floor/monotile/steel,
+/turf/open/floor/monotile/dark/airless,
 /area/hallway/nsv/deck1/hallway)
 "yF" = (
 /obj/structure/extinguisher_cabinet{
@@ -6788,11 +6778,6 @@
 	},
 /turf/open/floor/monotile/dark,
 /area/nsv/briefingroom)
-"zK" = (
-/obj/effect/turf_decal/ship/delivery/yellow,
-/obj/structure/rack,
-/turf/open/floor/monotile/steel,
-/area/hallway/nsv/deck1/hallway)
 "zW" = (
 /obj/effect/spawner/structure/window/reinforced/ship,
 /turf/open/floor/plating,
@@ -6829,7 +6814,7 @@
 "Ba" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2,
 /obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer4,
-/turf/open/floor/monotile/steel,
+/turf/open/floor/monotile/dark,
 /area/nsv/hanger/deck3{
 	name = "Air traffic control pod"
 	})
@@ -6850,8 +6835,8 @@
 	pixel_y = -25
 	},
 /obj/machinery/camera/motion{
-	dir = 1;
-	c_tag = "Upload South"
+	c_tag = "Upload South";
+	dir = 1
 	},
 /turf/open/floor/circuit,
 /area/ai_monitored/turret_protected/ai_upload)
@@ -6877,8 +6862,8 @@
 /area/quartermaster/miningdock)
 "CA" = (
 /obj/machinery/camera/motion{
-	dir = 1;
-	c_tag = "Core SE"
+	c_tag = "Core SE";
+	dir = 1
 	},
 /turf/open/floor/circuit,
 /area/ai_monitored/turret_protected/aisat)
@@ -6898,7 +6883,7 @@
 /obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer4{
 	dir = 5
 	},
-/turf/open/floor/plating,
+/turf/open/floor/plasteel/grid/steel,
 /area/quartermaster/miningdock)
 "Da" = (
 /obj/machinery/camera/autoname{
@@ -6951,6 +6936,12 @@
 	},
 /turf/open/floor/monotile/dark,
 /area/hallway/nsv/deck1/hallway)
+"Ew" = (
+/obj/effect/turf_decal/stripes/corner{
+	dir = 4
+	},
+/turf/open/floor/engine/airless,
+/area/space/nearstation)
 "Ey" = (
 /obj/structure/overmap/small_craft/combat/light,
 /turf/open/floor/engine/airless,
@@ -7129,7 +7120,7 @@
 	dir = 8
 	},
 /obj/machinery/light/small,
-/turf/open/floor/plating,
+/turf/open/floor/plasteel/grid/steel,
 /area/quartermaster/miningdock)
 "GS" = (
 /obj/structure/table/reinforced,
@@ -7257,7 +7248,7 @@
 /obj/effect/mapping_helpers/airlock/cyclelink_helper{
 	dir = 1
 	},
-/turf/open/floor/monotile/steel,
+/turf/open/floor/monotile/dark/airless,
 /area/hallway/nsv/deck1/hallway)
 "IJ" = (
 /obj/effect/turf_decal/tile/neutral{
@@ -7333,7 +7324,9 @@
 /turf/open/floor/plating,
 /area/quartermaster/miningdock)
 "JS" = (
-/obj/structure/table/reinforced,
+/obj/machinery/light{
+	dir = 8
+	},
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
 "JT" = (
@@ -7360,6 +7353,7 @@
 	name = "Air traffic control pod"
 	})
 "Kc" = (
+/obj/effect/turf_decal/tile/neutral/tile_full,
 /turf/open/floor/monotile/dark,
 /area/quartermaster/miningdock)
 "Kn" = (
@@ -7389,9 +7383,10 @@
 	name = "Air traffic control pod"
 	})
 "Kz" = (
-/obj/structure/fighter_frame,
-/obj/effect/turf_decal/ship/delivery/yellow,
-/turf/open/floor/monotile/dark/airless,
+/obj/effect/turf_decal/stripes/line{
+	dir = 9
+	},
+/turf/open/floor/engine/airless,
 /area/space/nearstation)
 "KD" = (
 /obj/structure/disposalpipe/segment,
@@ -7409,12 +7404,10 @@
 	},
 /obj/structure/fighter_launcher{
 	dir = 4;
-	name = "Gold 2"
+	name = "Bronze 1"
 	},
 /turf/open/floor/monotile/dark/airless,
-/area/nsv/hanger/deck3{
-	name = "Air traffic control pod"
-	})
+/area/quartermaster/miningdock)
 "KS" = (
 /obj/structure/disposalpipe/segment{
 	dir = 4
@@ -7433,6 +7426,12 @@
 /obj/effect/landmark/zebra_interlock_point,
 /turf/open/floor/monotile/steel,
 /area/hallway/nsv/deck1/hallway)
+"KV" = (
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/open/floor/monotile/dark/airless,
+/area/space/nearstation)
 "Ld" = (
 /obj/effect/turf_decal/stripes/box,
 /obj/machinery/porta_turret/ai,
@@ -7480,13 +7479,40 @@
 /turf/open/floor/engine/airless,
 /area/space/nearstation)
 "LI" = (
-/obj/machinery/flasher{
-	id = "AI";
-	pixel_x = 23;
-	pixel_y = -23
+/obj/structure/table/reinforced,
+/obj/machinery/camera/autoname{
+	dir = 4
 	},
-/turf/open/floor/circuit,
+/obj/item/paper_bin,
+/obj/machinery/power/apc/highcap/fifteen_k{
+	auto_name = 1;
+	dir = 8;
+	pixel_x = -24
+	},
+/obj/structure/cable{
+	icon_state = "0-4"
+	},
+/obj/machinery/newscaster/security_unit{
+	pixel_x = -32;
+	pixel_y = 32
+	},
+/obj/machinery/requests_console{
+	department = "AI";
+	departmentType = 5;
+	pixel_x = -30;
+	pixel_y = -30
+	},
+/turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
+"LQ" = (
+/obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer4{
+	dir = 1
+	},
+/obj/machinery/camera/autoname{
+	dir = 4
+	},
+/turf/open/floor/carpet/ship,
+/area/crew_quarters/heads/captain)
 "Mb" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
@@ -7546,6 +7572,16 @@
 /obj/structure/reagent_dispensers/foamtank/hull_repair_juice,
 /turf/open/floor/engine/airless,
 /area/space/nearstation)
+"MH" = (
+/obj/effect/turf_decal/ship/delivery{
+	color = "#964B00"
+	},
+/obj/structure/fighter_launcher{
+	dir = 4;
+	name = "Bronze 2"
+	},
+/turf/open/floor/monotile/dark/airless,
+/area/quartermaster/miningdock)
 "MI" = (
 /obj/effect/turf_decal/tile/neutral,
 /obj/effect/turf_decal/tile/neutral{
@@ -7757,10 +7793,8 @@
 	dir = 1
 	},
 /obj/effect/landmark/zebra_interlock_point,
-/obj/machinery/turnstile/xo{
-	dir = 1
-	},
 /obj/effect/turf_decal/loading_area,
+/obj/machinery/turnstile/xo,
 /turf/open/floor/monotile/steel,
 /area/hallway/nsv/deck1/hallway)
 "Qg" = (
@@ -7770,6 +7804,7 @@
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2{
 	dir = 6
 	},
+/obj/effect/turf_decal/tile/neutral/tile_full,
 /turf/open/floor/monotile/dark,
 /area/quartermaster/miningdock)
 "Qn" = (
@@ -7783,6 +7818,7 @@
 	},
 /obj/machinery/atmospherics/pipe/manifold4w/supply/hidden/layer2,
 /obj/machinery/atmospherics/pipe/manifold4w/scrubbers/hidden/layer4,
+/obj/effect/turf_decal/tile/neutral/tile_full,
 /turf/open/floor/monotile/dark,
 /area/quartermaster/miningdock)
 "Qq" = (
@@ -7808,7 +7844,7 @@
 /obj/machinery/atmospherics/components/binary/dp_vent_pump/high_volume/layer2{
 	dir = 4
 	},
-/turf/open/floor/plating,
+/turf/open/floor/plasteel/grid/steel,
 /area/quartermaster/miningdock)
 "Qx" = (
 /obj/structure/table,
@@ -7845,9 +7881,10 @@
 /turf/open/floor/engine/airless,
 /area/space/nearstation)
 "QL" = (
-/obj/structure/table/reinforced,
-/obj/item/phone,
-/obj/item/pen/fourcolor,
+/obj/machinery/camera/autoname{
+	c_tag = "Core W";
+	dir = 4
+	},
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
 "QT" = (
@@ -7975,7 +8012,7 @@
 	dir = 5
 	},
 /obj/machinery/advanced_airlock_controller/directional/west,
-/turf/open/floor/monotile/steel,
+/turf/open/floor/plasteel/grid/steel,
 /area/hallway/nsv/deck1/hallway)
 "Sg" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2{
@@ -8046,7 +8083,7 @@
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
 "SF" = (
-/turf/open/floor/plating,
+/turf/open/floor/plasteel/grid/steel,
 /area/quartermaster/miningdock)
 "Tl" = (
 /obj/structure/rack,
@@ -8056,7 +8093,9 @@
 /turf/open/floor/engine/airless,
 /area/space/nearstation)
 "Tn" = (
-/obj/machinery/blackbox_recorder,
+/obj/structure/table/reinforced,
+/obj/item/phone,
+/obj/item/pen/fourcolor,
 /turf/open/floor/monotile/dark,
 /area/ai_monitored/turret_protected/aisat)
 "TJ" = (
@@ -8191,7 +8230,7 @@
 	dir = 10
 	},
 /obj/machinery/atmospherics/components/binary/dp_vent_pump,
-/turf/open/floor/monotile/steel,
+/turf/open/floor/plasteel/grid/steel,
 /area/hallway/nsv/deck1/hallway)
 "Vp" = (
 /obj/effect/turf_decal/bot_white,
@@ -8279,8 +8318,9 @@
 /area/quartermaster/miningdock)
 "XE" = (
 /obj/effect/turf_decal/ship/delivery/yellow,
-/obj/structure/rack,
-/obj/item/storage/toolbox/mechanical,
+/obj/machinery/squad_vendor{
+	pixel_y = 32
+	},
 /turf/open/floor/monotile/steel,
 /area/hallway/nsv/deck1/hallway)
 "XJ" = (
@@ -8360,6 +8400,11 @@
 /obj/effect/turf_decal/ship/borderfloor/gunmetal{
 	dir = 5
 	},
+/turf/open/floor/monotile/dark/airless,
+/area/space/nearstation)
+"Zh" = (
+/obj/structure/fighter_frame,
+/obj/effect/turf_decal/ship/delivery/yellow,
 /turf/open/floor/monotile/dark/airless,
 /area/space/nearstation)
 "Zm" = (
@@ -28858,8 +28903,8 @@ iC
 ie
 no
 hR
-it
-ac
+iu
+Ew
 ac
 ac
 ac
@@ -29115,9 +29160,9 @@ iC
 ie
 no
 ax
+ax
 iu
-au
-ac
+Ew
 ac
 ac
 ac
@@ -29357,9 +29402,9 @@ ie
 ce
 ce
 NP
-ce
-ce
-ce
+ct
+JS
+QL
 NP
 ce
 ce
@@ -29371,7 +29416,7 @@ hA
 iC
 ie
 iC
-no
+ns
 ax
 ax
 it
@@ -29613,11 +29658,11 @@ iC
 ie
 ce
 lg
-ct
-JS
-gs
 ng
-ct
+cy
+gs
+cy
+ng
 Ld
 ce
 ie
@@ -29870,11 +29915,11 @@ iC
 ie
 ce
 ct
-ni
 cy
-LI
+ce
+NP
+ce
 cy
-ni
 ct
 ce
 ie
@@ -30129,7 +30174,7 @@ ce
 pe
 cy
 ce
-NP
+ce
 ce
 cy
 ll
@@ -30385,9 +30430,9 @@ is
 ce
 cu
 cy
-ce
-ce
-ce
+ni
+LI
+Tn
 cy
 ej
 ce
@@ -30642,9 +30687,9 @@ mx
 ce
 ct
 cy
-Tn
+dQ
 vW
-QL
+dQ
 cy
 ct
 ce
@@ -36796,14 +36841,14 @@ ax
 ax
 ax
 rQ
-ax
 iy
 iC
+Xp
 iC
 aQ
 bc
 kV
-kY
+LQ
 bJ
 bE
 xy
@@ -37053,9 +37098,9 @@ ax
 ax
 ax
 rQ
-ax
 iy
 iC
+Xp
 iC
 aQ
 bd
@@ -37310,9 +37355,9 @@ ax
 ax
 ax
 rQ
-ax
 iy
 iC
+Xp
 iC
 aQ
 dX
@@ -37567,9 +37612,9 @@ ax
 ax
 ax
 nJ
-ax
 iy
 iC
+Xp
 iC
 aQ
 bf
@@ -37599,7 +37644,7 @@ iC
 no
 ax
 iu
-ac
+Ew
 ac
 ac
 ac
@@ -37824,9 +37869,9 @@ ax
 ax
 ax
 nJ
-ax
 iy
 iC
+Xp
 iC
 aQ
 bg
@@ -37856,8 +37901,8 @@ iC
 no
 ax
 ax
-it
-ac
+iu
+Ew
 ac
 ac
 ac
@@ -38113,8 +38158,8 @@ eG
 iC
 no
 ax
+ax
 it
-ac
 ac
 ac
 ac
@@ -38368,10 +38413,10 @@ RM
 fM
 gZ
 iC
-no
+iC
+ns
 ax
 it
-ac
 ac
 ac
 ac
@@ -38594,8 +38639,8 @@ nH
 ax
 nH
 ax
-nJ
-iy
+iw
+iC
 iC
 aQ
 aV
@@ -38625,10 +38670,10 @@ fj
 eY
 gZ
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -38851,8 +38896,8 @@ nJ
 ax
 nJ
 ax
-nJ
 iy
+Xp
 iC
 aQ
 aV
@@ -38882,10 +38927,10 @@ fj
 eY
 gZ
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -39108,8 +39153,8 @@ nH
 ax
 nH
 ax
-nJ
 iy
+Xp
 iC
 aQ
 aV
@@ -39139,10 +39184,10 @@ fj
 eY
 gZ
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -39365,8 +39410,8 @@ nJ
 ax
 nJ
 ax
-nJ
 iy
+Xp
 iC
 aQ
 aW
@@ -39396,10 +39441,10 @@ fj
 fN
 gZ
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -39622,8 +39667,8 @@ nH
 ax
 nH
 ax
-nJ
 iy
+Xp
 iC
 aQ
 bC
@@ -39653,10 +39698,10 @@ fj
 eY
 gZ
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -39879,8 +39924,8 @@ nJ
 nJ
 nJ
 nJ
-nJ
 iy
+Xp
 iC
 aQ
 aV
@@ -39910,10 +39955,10 @@ fj
 eY
 gZ
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -40136,8 +40181,8 @@ nJ
 ax
 ax
 ax
-nJ
-iy
+iz
+iC
 iC
 aQ
 aV
@@ -40167,10 +40212,10 @@ jI
 jV
 gZ
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -40424,10 +40469,10 @@ jT
 jW
 gZ
 iC
+iC
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -40681,10 +40726,10 @@ jU
 jU
 eG
 nq
+iC
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -40938,10 +40983,10 @@ fd
 fd
 Wi
 iC
+Xp
 no
 ax
 it
-ac
 ac
 ac
 ac
@@ -41178,7 +41223,7 @@ Wi
 dK
 es
 bN
-fZ
+XE
 cb
 iT
 mP
@@ -41195,10 +41240,10 @@ fK
 fd
 Wi
 iC
+Xp
 no
 ax
 iu
-au
 au
 au
 au
@@ -41452,8 +41497,8 @@ fd
 fd
 Wi
 iC
+Xp
 no
-ax
 ax
 ax
 ax
@@ -41692,7 +41737,7 @@ Wi
 dJ
 es
 bN
-zK
+XE
 cb
 iT
 cb
@@ -41709,8 +41754,8 @@ iF
 yZ
 yZ
 iC
-no
-ax
+iC
+np
 ax
 ax
 ax
@@ -41966,7 +42011,7 @@ mU
 Gv
 iC
 iC
-no
+np
 ax
 ax
 ax
@@ -41977,9 +42022,9 @@ ax
 ax
 ax
 ax
-ax
-ax
-ax
+Xp
+Xp
+Xp
 ax
 ax
 ax
@@ -42501,10 +42546,10 @@ Ml
 HK
 Jp
 ax
-ax
-ax
-ax
-ax
+Xp
+Xp
+Xp
+Xp
 ax
 ax
 ax
@@ -42720,7 +42765,7 @@ Wi
 dJ
 es
 bN
-fZ
+XE
 cb
 iT
 dZ
@@ -43733,10 +43778,10 @@ ax
 ax
 ax
 ax
+ax
 ac
 ax
 nJ
-ax
 ax
 ax
 ax
@@ -43988,16 +44033,16 @@ nJ
 ac
 qr
 ac
-Ne
+nl
 ac
-UW
+ac
+nr
 ac
 nJ
 lI
 lJ
 lJ
 lI
-ax
 ax
 iy
 iC
@@ -44247,10 +44292,10 @@ QF
 ax
 ax
 ax
-QF
+ax
+ac
 ax
 nJ
-ax
 ax
 ax
 ax
@@ -44503,12 +44548,12 @@ ac
 Mt
 ac
 ax
+nJ
 ac
-QF
 ac
-hA
-hA
-hA
+ac
+nJ
+ax
 hA
 hA
 hA
@@ -44760,17 +44805,17 @@ ax
 QF
 ax
 ax
+nJ
 ax
-QF
+ac
+ax
+nJ
 ax
 hA
-nr
+Kz
 bW
 aK
 hA
-nr
-bW
-aK
 iy
 iC
 dS
@@ -45017,17 +45062,17 @@ ac
 qr
 ac
 Ne
-ac
-UW
-ac
+nJ
+nJ
+nJ
+nJ
+nJ
+ax
 hA
 it
-Kz
+Zh
 af
 hA
-it
-Kz
-af
 iy
 iC
 dS
@@ -45274,17 +45319,17 @@ ax
 ac
 ax
 ax
+nJ
 ax
-ac
+ax
+Ne
+nJ
 ax
 hA
 it
 Mt
 af
 hA
-it
-Mt
-af
 iy
 iC
 dT
@@ -45531,17 +45576,17 @@ ac
 ax
 ac
 ax
-ac
+nJ
 ax
-ac
+ax
+ax
+nJ
+ax
 hA
 iu
 au
 ba
 hA
-iu
-au
-ba
 iy
 iC
 dT
@@ -45587,7 +45632,7 @@ Jp
 ax
 ax
 ax
-ax
+Xp
 ac
 ac
 aa
@@ -45844,7 +45889,7 @@ Jp
 ax
 ax
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -46071,7 +46116,7 @@ aF
 dT
 no
 ax
-ax
+Xp
 ax
 ax
 ax
@@ -46101,7 +46146,7 @@ Jp
 ax
 ax
 ax
-ax
+Xp
 ac
 ac
 aa
@@ -46328,7 +46373,7 @@ eE
 dT
 no
 ax
-ax
+Xp
 ax
 ax
 ax
@@ -46358,7 +46403,7 @@ sm
 ax
 ax
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -46585,6 +46630,7 @@ eE
 dT
 no
 ax
+Xp
 ax
 ax
 ax
@@ -46614,8 +46660,7 @@ ax
 ax
 ax
 ax
-ax
-ax
+Xp
 ac
 ac
 aa
@@ -46842,7 +46887,7 @@ eE
 dT
 no
 ax
-ax
+Xp
 ax
 ax
 ax
@@ -46872,7 +46917,7 @@ hX
 ax
 ax
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -47099,7 +47144,7 @@ eE
 dT
 no
 ax
-ax
+Xp
 ax
 ax
 ax
@@ -47129,7 +47174,7 @@ ax
 ax
 ax
 ax
-ax
+Xp
 ac
 ac
 aa
@@ -47356,7 +47401,7 @@ eE
 dS
 no
 ax
-ax
+Xp
 ax
 ax
 ax
@@ -47386,7 +47431,7 @@ ax
 ax
 ax
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -47623,7 +47668,7 @@ KJ
 ax
 hX
 ax
-KJ
+MH
 ax
 ib
 ax
@@ -48154,7 +48199,7 @@ ax
 ax
 ax
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -48411,7 +48456,7 @@ ax
 ax
 ax
 ax
-ax
+Xp
 ac
 ac
 aa
@@ -48629,15 +48674,15 @@ ax
 ax
 iz
 jj
-jj
-jj
-jj
-jj
-jj
-jj
-jj
-jj
-jj
+iC
+Xp
+Xp
+Xp
+Xp
+Xp
+Xp
+Xp
+iC
 jj
 np
 ax
@@ -48668,7 +48713,7 @@ ax
 ax
 hX
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -48886,15 +48931,15 @@ ax
 ax
 ax
 ax
-ax
-ax
-ax
-ax
-nl
-ax
-ax
-ax
-ax
+iz
+jj
+jj
+jj
+jj
+jj
+jj
+jj
+np
 ax
 ax
 ax
@@ -48925,7 +48970,7 @@ ax
 hX
 ae
 hX
-ax
+Xp
 ac
 ac
 aa
@@ -49147,7 +49192,7 @@ ax
 ax
 ax
 ax
-ax
+KV
 ax
 ax
 ax
@@ -49182,7 +49227,7 @@ ax
 ax
 hX
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -49439,7 +49484,7 @@ ax
 ax
 ax
 ax
-ax
+Xp
 ac
 ac
 aa
@@ -50208,7 +50253,7 @@ ax
 ax
 ax
 ax
-ax
+Xp
 ax
 ac
 aa
@@ -50464,8 +50509,8 @@ lI
 lI
 ax
 ax
-ax
-ax
+Xp
+Xp
 ac
 ac
 aa
@@ -50722,7 +50767,7 @@ ax
 ax
 ax
 ax
-ax
+Xp
 ax
 ac
 aa

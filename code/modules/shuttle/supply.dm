@@ -44,6 +44,10 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 
 	//Export categories for this run, this is set by console sending the shuttle.
 	var/export_categories = EXPORT_CARGO
+	// NSV13 - Mail Control - Start
+	// Switch used to toggle between the ship being open to receiving mail, or not.
+	var/send_mail = TRUE
+	// NSV13 - Mail Control - Stop
 
 /obj/docking_port/mobile/supply/register()
 	. = ..()
@@ -71,8 +75,11 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 
 /obj/docking_port/mobile/supply/initiate_docking()
 	if(getDockedId() == "supply_away") // Buy when we leave home.
+		// NSV13 - Mail Control - Start
+		if(send_mail)
+			create_mail()
+		// NSV13 - Mail Control - Stop
 		buy()
-		create_mail()
 	. = ..() // Fly/enter transit.
 	if(. != DOCKING_SUCCESS)
 		return
@@ -220,5 +227,5 @@ GLOBAL_LIST_INIT(blacklisted_cargo_types, typecacheof(list(
 			if(is_blocked_turf(T))
 				continue
 			empty_turfs += T
-
-	new /obj/structure/closet/crate/mail/economy(pick(empty_turfs))
+		if (empty_turfs)
+			new /obj/structure/closet/crate/mail/economy(pick(empty_turfs))

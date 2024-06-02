@@ -32,6 +32,8 @@
 	resistance_flags = FLAMMABLE
 	var/foldable = /obj/item/stack/sheet/cardboard
 	var/illustration = "writing"
+	drop_sound = 'sound/items/handling/cardboardbox_drop.ogg'
+	pickup_sound =  'sound/items/handling/cardboardbox_pickup.ogg'
 
 /obj/item/storage/box/Initialize(mapload)
 	. = ..()
@@ -80,25 +82,14 @@
 	name = "compression box of invisible outfits"
 	desc = "a box with bluespace compression technology that nanotrasen has approved, but this is extremely heavy... If you're glued with this box, pull out of the contents and fold the box."
 	w_class = WEIGHT_CLASS_HUGE
+	item_flags = SLOWS_WHILE_IN_HAND
+	slowdown = 4
 	drag_slowdown = 4 // do not steal by dragging
 	/* Note for the compression box:
 		Do not put any box (or suit) into this box, or it will allow infinite storage.
 		non-storage items are only legit for this box. (suits are storage too, so, no.)
 		nor it will allow a glitch when you can access different boxes at the same time.
 		examples exist in `closets/secure/security.dm` */
-
-/obj/item/storage/box/suitbox/pickup(mob/user)
-	. = ..()
-	user.add_movespeed_modifier(MOVESPEED_ID_SLOW_SUITBOX, update=TRUE, priority=100, multiplicative_slowdown=4)
-
-/obj/item/storage/box/suitbox/dropped(mob/living/user)
-	..()
-	var/box_exists = FALSE
-	for(var/obj/item/storage/box/suitbox/B in user.get_contents())
-		box_exists = TRUE // `var/obj/item/storage/box/suitbox/B` is already type check
-		break
-	if(!box_exists)
-		user.remove_movespeed_modifier(MOVESPEED_ID_SLOW_SUITBOX, TRUE)
 
 /obj/item/storage/box/suitbox/wardrobe // for `wardrobe.dm`
 	name = "compression box of crew outfits"
@@ -613,14 +604,14 @@
 
 /obj/item/storage/box/PDAs/PopulateContents()
 	for(var/i in 1 to 4)
-		new /obj/item/pda(src)
-	new /obj/item/cartridge/head(src)
+		new /obj/item/modular_computer/tablet/pda(src)
+	new /obj/item/computer_hardware/hard_drive/role/head(src)
 
-	var/newcart = pick(	/obj/item/cartridge/engineering,
-						/obj/item/cartridge/security,
-						/obj/item/cartridge/medical,
-						/obj/item/cartridge/signal/toxins,
-						/obj/item/cartridge/quartermaster)
+	var/newcart = pick(	/obj/item/computer_hardware/hard_drive/role/engineering,
+						/obj/item/computer_hardware/hard_drive/role/security,
+						/obj/item/computer_hardware/hard_drive/role/medical,
+						/obj/item/computer_hardware/hard_drive/role/signal/toxins,
+						/obj/item/computer_hardware/hard_drive/role/cargo_technician)
 	new newcart(src)
 
 /obj/item/storage/box/silver_ids
@@ -640,24 +631,24 @@
 
 /obj/item/storage/box/prisoner/PopulateContents()
 	..()
-	new /obj/item/card/id/prisoner/one(src)
-	new /obj/item/card/id/prisoner/two(src)
-	new /obj/item/card/id/prisoner/three(src)
-	new /obj/item/card/id/prisoner/four(src)
-	new /obj/item/card/id/prisoner/five(src)
-	new /obj/item/card/id/prisoner/six(src)
-	new /obj/item/card/id/prisoner/seven(src)
+	new /obj/item/card/id/gulag/one(src)
+	new /obj/item/card/id/gulag/two(src)
+	new /obj/item/card/id/gulag/three(src)
+	new /obj/item/card/id/gulag/four(src)
+	new /obj/item/card/id/gulag/five(src)
+	new /obj/item/card/id/gulag/six(src)
+	new /obj/item/card/id/gulag/seven(src)
 
 /obj/item/storage/box/seccarts
-	name = "box of PDA security cartridges"
-	desc = "A box full of PDA cartridges used by Security."
+	name = "box of PDA security job disks"
+	desc = "A box full of PDA job disks used by Security."
 	icon_state = "secbox"
 	illustration = "pda"
 
 /obj/item/storage/box/seccarts/PopulateContents()
-	new /obj/item/cartridge/detective(src)
+	new /obj/item/computer_hardware/hard_drive/role/detective(src)
 	for(var/i in 1 to 6)
-		new /obj/item/cartridge/security(src)
+		new /obj/item/computer_hardware/hard_drive/role/security(src)
 
 /obj/item/storage/box/firingpins
 	name = "box of standard firing pins"
@@ -769,6 +760,8 @@
 	item_state = "zippo"
 	w_class = WEIGHT_CLASS_TINY
 	slot_flags = ITEM_SLOT_BELT
+	drop_sound = 'sound/items/handling/matchbox_drop.ogg'
+	pickup_sound =  'sound/items/handling/matchbox_pickup.ogg'
 
 /obj/item/storage/box/matches/ComponentInitialize()
 	. = ..()
@@ -1310,7 +1303,7 @@
 /obj/item/storage/box/debugtools/PopulateContents()
 	var/static/items_inside = list(
 		/obj/item/flashlight/emp/debug=1,\
-		/obj/item/pda=1,\
+		/obj/item/modular_computer/tablet/pda=1,\
 		/obj/item/modular_computer/tablet/preset/advanced=1,\
 		/obj/item/storage/belt/military/abductor/full=1,\
 		/obj/item/geiger_counter=1,\
@@ -1408,7 +1401,7 @@
 /obj/item/storage/box/radiokey/clown  // honk
 	name = "\improper H.O.N.K. CO fake encryption keys"
 	desc = "Totally prank your friends with these realistic encryption keys!"
-	
+
 /obj/item/storage/box/radiokey/clown/PopulateContents()
 	new /obj/item/encryptionkey/heads/rd/fake(src)
 	new /obj/item/encryptionkey/heads/hos/fake(src)

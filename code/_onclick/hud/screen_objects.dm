@@ -161,6 +161,7 @@
 			icon_state = icon_full
 		else
 			icon_state = icon_empty
+	return ..()
 
 /atom/movable/screen/inventory/proc/add_overlays()
 	var/mob/user = hud?.mymob
@@ -370,6 +371,7 @@
 			icon_state = "walking"
 		if(MOVE_INTENT_RUN)
 			icon_state = "running"
+	return ..()
 
 /atom/movable/screen/mov_intent/proc/toggle(mob/user)
 	if(isobserver(user))
@@ -391,6 +393,7 @@
 		icon_state = "pull"
 	else
 		icon_state = "pull0"
+	return ..()
 
 /atom/movable/screen/resist
 	name = "resist"
@@ -425,6 +428,7 @@
 		icon_state = "act_rest"
 	else
 		icon_state = "act_rest0"
+	return ..()
 
 /atom/movable/screen/storage
 	name = "storage"
@@ -564,6 +568,7 @@
 	if(choice != selecting)
 		selecting = choice
 		update_icon()
+		SEND_SIGNAL(user, COMSIG_MOB_SELECTED_ZONE_SET, choice) //NSV13 - Surgery QoL
 
 	return TRUE
 

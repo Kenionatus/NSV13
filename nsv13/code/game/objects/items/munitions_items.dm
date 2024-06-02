@@ -84,6 +84,11 @@
 	icon_state = "mun_headset"
 	keyslot = new /obj/item/encryptionkey/munitions_tech
 
+/obj/item/radio/headset/munitions/munitions_tech/alt
+	name = "munitions technician bowmans headset"
+	desc = "Use :w to access the department frequency. Use :u to access the supply frequency"
+	icon_state = "mun_headset_alt"
+
 /obj/item/radio/headset/munitions/munitions_security_alt
 	name = "munitions-security bowman headset"
 	desc = "The headset used by your local munitions mall cop, but with ear protection! Now you won't go deaf!"
@@ -135,20 +140,9 @@
 	icon_state = "muniband"
 
 
-///////BOX////////
-/obj/item/storage/box/radiokey/mun
-	name = "box of munitions radio keys"
-	desc = "Grants access to munitions and supply radio."
-	radio_key = /obj/item/encryptionkey/munitions_tech
-
-/obj/item/storage/box/radiokey/pilot
-	name = "box of pilot radio keys"
-	desc = "Grants access to air traffic control and munitions radio."
-	radio_key = /obj/item/encryptionkey/pilot
-
 ///////ATC STICKS///////
 /obj/item/flashlight/atc_wavy_sticks //I dont know what theyre actually called :)
-	name = "Aircraft sigalling sticks"
+	name = "Aircraft signalling sticks"
 	desc = "A large set of fluorescent sticks used to direct aircraft around the hangar bay."
 	icon = 'nsv13/icons/objects/lighting.dmi'
 	icon_state = "wavystick"

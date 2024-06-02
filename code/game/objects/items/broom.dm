@@ -15,8 +15,8 @@
 
 /obj/item/pushbroom/Initialize(mapload)
 	. = ..()
-	RegisterSignal(src, COMSIG_TWOHANDED_WIELD, .proc/on_wield)
-	RegisterSignal(src, COMSIG_TWOHANDED_UNWIELD, .proc/on_unwield)
+	RegisterSignal(src, COMSIG_TWOHANDED_WIELD, PROC_REF(on_wield))
+	RegisterSignal(src, COMSIG_TWOHANDED_UNWIELD, PROC_REF(on_unwield))
 
 /obj/item/pushbroom/ComponentInitialize()
 	. = ..()
@@ -31,7 +31,7 @@
 	SIGNAL_HANDLER
 
 	to_chat(user, "<span class='notice'>You brace the [src] against the ground in a firm sweeping stance.</span>")
-	RegisterSignal(user, COMSIG_MOVABLE_MOVED, .proc/sweep)
+	RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(sweep))
 
 /// triggered on unwield of two handed item
 /obj/item/pushbroom/proc/on_unwield(obj/item/source, mob/user)
@@ -62,14 +62,19 @@
 	if (locate(/obj/structure/table) in target.contents)
 		return
 	var/i = 0
-	var/turf/target_turf = get_step(target, user.dir)
+	//NSV13 - Illegal movement through space and time.
+	var/movedir = user.dir
+	movedir &= ~UP
+	movedir &= ~DOWN
+	var/turf/target_turf = get_step(target, movedir)
+	//NSV13 endish
 	var/obj/machinery/disposal/bin/target_bin = locate(/obj/machinery/disposal/bin) in target_turf.contents
 	for(var/obj/item/garbage in target.contents)
 		if(!garbage.anchored)
 			if (target_bin)
 				garbage.forceMove(target_bin)
 			else
-				garbage.Move(target_turf, user.dir)
+				garbage.Move(target_turf, movedir) //NSV13 - mild arg adjustment
 			i++
 		if(i > 19)
 			break
