@@ -55,7 +55,7 @@ This proc is to be used when someone gets stuck in an overmap ship, gauss, WHATE
 
 /obj/structure/overmap
 	var/last_process = 0
-	var/processing_failsafe = FALSE //Has the game lagged to shit and we need to handle our own processing until it clears up?
+	var/processing_failsafe = FALSE //!Has the game lagged to shit and we need to handle our own processing until it clears up?
 	var/obj/vector_overlay/vector_overlay
 	var/pixel_collision_size_x = 0
 	var/pixel_collision_size_y = 0
@@ -63,8 +63,8 @@ This proc is to be used when someone gets stuck in an overmap ship, gauss, WHATE
 	var/matrix/vector/last_offset
 	var/matrix/vector/position
 	var/matrix/vector/velocity
-	var/matrix/vector/overlap // Will be subtracted from the ships offset as soon as possible, then set to 0
-	var/list/collision_positions = list() //See the collisions doc for how these work. Theyre a pain in the ass.
+	var/matrix/vector/overlap //! Will be subtracted from the ships offset as soon as possible, then set to 0
+	var/list/collision_positions = list() //!See the collisions doc for how these work. Theyre a pain in the ass.
 	var/datum/component/physics2d/physics2d = null
 
 /// This makes us not drift like normal objects in space do
@@ -102,7 +102,7 @@ This proc is to be used when someone gets stuck in an overmap ship, gauss, WHATE
 	src.pixel_z = pixel_z
 	src.pixel_w = pixel_w
 
-//Method to show the hitbox of your current ship to see if youve set it up correctly
+///Method to show the hitbox of your current ship to see if youve set it up correctly
 /obj/structure/overmap/proc/display_hitbox()
 	if(!collision_positions.len)
 		return
@@ -196,7 +196,7 @@ This proc is to be used when someone gets stuck in an overmap ship, gauss, WHATE
 		angular_velocity += angular_velocity_adjustment
 	else
 		last_rotate = 0
-	angle += (angular_velocity * time) % 360
+	angle = abs(angle + angular_velocity * time) % 360
 	// calculate drag and shit
 
 	var/velocity_mag = velocity.ln() // magnitude
@@ -589,7 +589,8 @@ This proc is to be used when someone gets stuck in an overmap ship, gauss, WHATE
 		log_combat(pilot, M, "impacted", src, "with velocity of [bump_velocity]")
 	return ..()
 
-/obj/structure/overmap/proc/fire_projectile(proj_type, atom/target, speed=null, user_override=null, lateral=FALSE, ai_aim = FALSE, miss_chance=5, max_miss_distance=5, broadside=FALSE) //Fire one shot. Used for big, hyper accelerated shots rather than PDCs
+///Fire one shot. Used for big, hyper accelerated shots rather than PDCs
+/obj/structure/overmap/proc/fire_projectile(proj_type, atom/target, speed=null, user_override=null, lateral=FALSE, ai_aim = FALSE, miss_chance=5, max_miss_distance=5, broadside=FALSE)
 	if(!z || QDELETED(src))
 		return FALSE
 	var/turf/T = get_center()
