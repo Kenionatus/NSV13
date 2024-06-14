@@ -196,7 +196,7 @@ This proc is to be used when someone gets stuck in an overmap ship, gauss, WHATE
 		angular_velocity += angular_velocity_adjustment
 	else
 		last_rotate = 0
-	angle += angular_velocity * time
+	angle += (angular_velocity * time) % 360
 	// calculate drag and shit
 
 	var/velocity_mag = velocity.ln() // magnitude
