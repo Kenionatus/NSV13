@@ -15,32 +15,32 @@ SUBSYSTEM_DEF(overmap_mode)
 	wait = 10
 	init_order = INIT_ORDER_OVERMAP_MODE
 
-	var/escalation = 0								//Admin ability to tweak current mission difficulty level
-	var/threat_elevation = 0						//Threat generated or reduced via various activities, directly buffing enemy fleet sizes and possibly other things if implemented.
-	var/highest_objective_completion = 0				//What was the highest amount of objectives completed? If it increases, reduce threat.
-	var/player_check = 0 							//Number of players connected when the check is made for gamemode
-	var/datum/overmap_gamemode/mode 				//The assigned mode
-	var/datum/overmap_gamemode/forced_mode = null							//Admin forced gamemode prior to initialization
+	var/escalation = 0								//!Admin ability to tweak current mission difficulty level
+	var/threat_elevation = 0						//!Threat generated or reduced via various activities, directly buffing enemy fleet sizes and possibly other things if implemented.
+	var/highest_objective_completion = 0			//!What was the highest amount of objectives completed? If it increases, reduce threat.
+	var/player_check = 0 							//!Number of players connected when the check is made for gamemode
+	var/datum/overmap_gamemode/mode 				//!The assigned mode
+	var/datum/overmap_gamemode/forced_mode = null	//!Admin forced gamemode prior to initialization
 
-	var/objective_reminder_override = FALSE 		//Are we currently using the reminder system?
-	var/last_objective_interaction = 0 				//Last time the crew interacted with one of our objectives
-	var/next_objective_reminder = 0 				//Next time we automatically remind the crew to proceed with objectives
-	var/objective_reminder_stacks = 0 				//How many times has the crew been automatically reminded of objectives without any progress
-	var/objective_resets_reminder = FALSE			//Do we only reset the reminder when we complete an objective?
-	var/combat_resets_reminder = FALSE 				//Does combat in the overmap reset the reminder?
-	var/combat_delays_reminder = FALSE 				//Does combat in the overmap delay the reminder?
-	var/combat_delay_amount = 0 					//How much the reminder is delayed by combat
+	var/objective_reminder_override = FALSE 		//!Are we currently using the reminder system?
+	var/last_objective_interaction = 0 				//!Last time the crew interacted with one of our objectives
+	var/next_objective_reminder = 0 				//!Next time we automatically remind the crew to proceed with objectives
+	var/objective_reminder_stacks = 0 				//!How many times has the crew been automatically reminded of objectives without any progress
+	var/objective_resets_reminder = FALSE			//!Do we only reset the reminder when we complete an objective?
+	var/combat_resets_reminder = FALSE 				//!Does combat in the overmap reset the reminder?
+	var/combat_delays_reminder = FALSE 				//!Does combat in the overmap delay the reminder?
+	var/combat_delay_amount = 0 					//!How much the reminder is delayed by combat
 
-	var/announce_delay = 3 MINUTES					//How long do we wait?
-	var/announced_objectives = FALSE 				//Have we announced the objectives yet?
-	var/round_extended = FALSE 						//Has the round already been extended already?
-	var/admin_override = FALSE						//Stops the mission ending
-	var/objectives_completed = FALSE				//Did they finish all the objectives that are available to them?
-	var/already_ended = FALSE						//Is the round already in an ending state, i.e. we return jumped
+	var/announce_delay = 3 MINUTES					//!How long do we wait?
+	var/announced_objectives = FALSE 				//!Have we announced the objectives yet?
+	var/round_extended = FALSE 						//!Has the round already been extended already?
+	var/admin_override = FALSE						//!Stops the mission ending
+	var/objectives_completed = FALSE				//!Did they finish all the objectives that are available to them?
+	var/already_ended = FALSE						//!Is the round already in an ending state, i.e. we return jumped
 	var/mode_initialised = FALSE
 
-	var/override_ghost_boarders = FALSE 			//Used by admins to force disable player boarders
-	var/override_ghost_ships = FALSE				//Used by admins to force disable player ghost ships
+	var/override_ghost_boarders = FALSE 			//!Used by admins to force disable player boarders
+	var/override_ghost_ships = FALSE				//!Used by admins to force disable player ghost ships
 
 	var/check_completion_timer = 0
 
@@ -358,25 +358,25 @@ SUBSYSTEM_DEF(overmap_mode)
 		mode.difficulty = 1
 
 /datum/overmap_gamemode
-	var/name = null											//Name of the gamemode type
-	var/config_tag = null									//Tag for config file weight
-	var/desc = null											//Description of the gamemode for ADMINS
-	var/brief = null										//Description of the gamemode for PLAYERS
-	var/selection_weight = 0								//Used to determine the chance of this gamemode being selected
-	var/required_players = 0								//Required number of players for this gamemode to be randomly selected
-	var/max_players = 0										//Maximum amount of players allowed for this mode, 0 = unlimited
-	var/difficulty = null									//Difficulty of the gamemode as determined by player count / abus abuse: 1 is minimum, 10 is maximum
-	var/starting_system = null								//Here we define where our player ships will start
-	var/starting_faction = null 							//Here we define which faction our player ships belong
-	var/objective_reminder_setting = REMINDER_OBJECTIVES	//0 - Objectives reset remind. 1 - Combat resets reminder. 2 - Combat delays reminder. 3 - Disables reminder
-	var/objective_reminder_interval = 15 MINUTES			//Interval between objective reminders
-	var/combat_delay = 0									//How much time is added to the reminder timer
-	var/list/objectives = list()							//The actual gamemode objectives go here after being selected
-	var/list/fixed_objectives = list()						//The fixed objectives for the mode - always selected
-	var/list/random_objectives = list()						//The random objectives for the mode - the pool to be chosen from
-	var/random_objective_amount = 0							//How many random objectives we are going to get
-	var/whitelist_only = FALSE								//Can only be selected through map bound whitelists
-	var/debug_mode = FALSE 									//Debug var, for gamemode-specific testing
+	var/name = null											//!Name of the gamemode type
+	var/config_tag = null									//!Tag for config file weight
+	var/desc = null											//!Description of the gamemode for ADMINS
+	var/brief = null										//!Description of the gamemode for PLAYERS
+	var/selection_weight = 0								//!Used to determine the chance of this gamemode being selected
+	var/required_players = 0								//!Required number of players for this gamemode to be randomly selected
+	var/max_players = 0										//!Maximum amount of players allowed for this mode, 0 = unlimited
+	var/difficulty = null									//!Difficulty of the gamemode as determined by player count / abus abuse: 1 is minimum, 10 is maximum
+	var/starting_system = null								//!Here we define where our player ships will start
+	var/starting_faction = null 							//!Here we define which faction our player ships belong
+	var/objective_reminder_setting = REMINDER_OBJECTIVES	//!0 - Objectives reset remind. 1 - Combat resets reminder. 2 - Combat delays reminder. 3 - Disables reminder
+	var/objective_reminder_interval = 15 MINUTES			//!Interval between objective reminders
+	var/combat_delay = 0									//!How much time is added to the reminder timer
+	var/list/objectives = list()							//!The actual gamemode objectives go here after being selected
+	var/list/fixed_objectives = list()						//!The fixed objectives for the mode - always selected
+	var/list/random_objectives = list()						//!The random objectives for the mode - the pool to be chosen from
+	var/random_objective_amount = 0							//!How many random objectives we are going to get
+	var/whitelist_only = FALSE								//!Can only be selected through map bound whitelists
+	var/debug_mode = FALSE 									//!Debug var, for gamemode-specific testing
 
 	//Reminder messages
 	var/reminder_origin = "Naval Command"
@@ -486,24 +486,24 @@ SUBSYSTEM_DEF(overmap_mode)
 	SSticker.force_ending = TRUE
 
 /datum/overmap_objective
-	var/name										//Name for admin view
-	var/desc										//Short description for admin view
-	var/brief										//Description for PLAYERS
-	var/stage										//For multi step objectives
-	var/binary = TRUE								//Is this just a simple T/F objective?
-	var/tally = 0									//How many of the objective goal has been completed
-	var/target = 0									//How many of the objective goal is required
-	var/status = STATUS_INPROGRESS					//0 = In-progress, 1 = Completed, 2 = Failed, 3 = Victory Override (this will end the round)
-	var/extension_supported = FALSE 				//Is this objective available to be a random extended round objective?
-	var/ignore_check = FALSE						//Used for checking extended rounds
-	var/instanced = FALSE							//Have we yet run the instance proc for this objective?
-	var/objective_number = 0						//The objective's index in the list. Useful for creating arbitrary report titles
-	var/required_players = 0						//Minimum number of players to get this if it's a random/extended objective
-	var/maximum_players = 0							//Maximum number of players to get this if it's a random/extended objective. 0 is unlimited.
+	var/name										//!Name for admin view
+	var/desc										//!Short description for admin view
+	var/brief										//!Description for PLAYERS
+	var/stage										//!For multi step objectives
+	var/binary = TRUE								//!Is this just a simple T/F objective?
+	var/tally = 0									//!How many of the objective goal has been completed
+	var/target = 0									//!How many of the objective goal is required
+	var/status = STATUS_INPROGRESS					//!0 = In-progress, 1 = Completed, 2 = Failed, 3 = Victory Override (this will end the round)
+	var/extension_supported = FALSE 				//!Is this objective available to be a random extended round objective?
+	var/ignore_check = FALSE						//!Used for checking extended rounds
+	var/instanced = FALSE							//!Have we yet run the instance proc for this objective?
+	var/objective_number = 0						//!The objective's index in the list. Useful for creating arbitrary report titles
+	var/required_players = 0						//!Minimum number of players to get this if it's a random/extended objective
+	var/maximum_players = 0							//!Maximum number of players to get this if it's a random/extended objective. 0 is unlimited.
 
 /datum/overmap_objective/New()
 
-/datum/overmap_objective/proc/instance() //Used to generate any in world assets
+/datum/overmap_objective/proc/instance() //!Used to generate any in world assets
 	if ( SSovermap_mode.announced_objectives )
 		// If this objective was manually added by admins after announce, prints a new report. Otherwise waits for the gamemode to be announced before instancing reports
 		print_objective_report()
@@ -517,14 +517,14 @@ SUBSYSTEM_DEF(overmap_mode)
 /datum/overmap_objective/custom
 	name = "Custom"
 
-/datum/overmap_objective/custom/New(passed_input) //Receive the string and make it brief/desc
+/datum/overmap_objective/custom/New(passed_input) //!Receive the string and make it brief/desc
 	.=..()
 	desc = passed_input
 	brief = passed_input
 
 //////ADMIN TOOLS//////
 
-/client/proc/overmap_mode_controller() //Admin Verb for the Overmap Gamemode controller
+/client/proc/overmap_mode_controller() //!Admin Verb for the Overmap Gamemode controller
 	set name = "Overmap Gamemode Controller"
 	set desc = "Manage the Overmap Gamemode"
 	set category = "Adminbus"
