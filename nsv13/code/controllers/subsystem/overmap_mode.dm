@@ -18,12 +18,14 @@ SUBSYSTEM_DEF(overmap_mode)
 	var/escalation = 0								//!Admin ability to tweak current mission difficulty level
 	var/threat_elevation = 0						//!Threat generated or reduced via various activities, directly buffing enemy fleet sizes and possibly other things if implemented.
 	var/highest_objective_completion = 0			//!What was the highest amount of objectives completed? If it increases, reduce threat.
-	var/player_check = 0 							//!Number of players connected when the check is made for gamemode
 	var/datum/overmap_gamemode/mode 				//!The assigned mode
 	var/datum/overmap_gamemode/forced_mode = null	//!Admin forced gamemode prior to initialization
-
-	var/timer
-	var/timer_running = FALSE
+	var/fallback_mode = 							\
+		/datum/overmap_gamemode/patrol				//!Game mode to be used when automatic selection fails
+	var/objective_reminder_override = FALSE 		//!Are we currently using the reminder system?
+	var/last_objective_interaction = 0 				//!Last time the crew interacted with one of our objectives
+	var/next_objective_reminder = 0 				//!Next time we automatically remind the crew to proceed with objectives
+	var/objective_reminder_stacks = 0 				//!How many times has the crew been automatically reminded of objectives without any progress
 	var/objective_resets_reminder = FALSE			//!Do we only reset the reminder when we complete an objective?
 	var/combat_resets_timer = FALSE
 	var/combat_increases_timer = FALSE
@@ -41,26 +43,23 @@ SUBSYSTEM_DEF(overmap_mode)
 
 	var/check_completion_timer = 0
 
-	var/list/mode_cache
+/* 	var/list/modes	TODO:Check if actually needed
+	var/list/mode_names */
 
-	var/list/modes
-	var/list/mode_names
+/**Returns one randomly selected overmap_gamemode for the purpose of automatic assignment.
+ * Some filtering is done to select only suitable ones
+ **/
+/datum/controller/subsystem/overmap_mode/proc/select_mode(default_type = /datum/overmap_gamemode/patrol)
+	RETURN_TYPE(/datum/overmap_gamemode)
 
-/datum/controller/subsystem/overmap_mode/Initialize(start_timeofday)
-	//Retrieve the list of modes
-	//Check our map for any white/black lists
-	//Exclude or lock any modes due to maps
-	//Check the player numbers
-	//Exclude or lock any modes due to players
-	//Use probs to pick a mode from the trimmed pool
-	//Set starting systems for the player ships
-	//Load and set objectives
+	if(forced_mode)
+		return new forced_mode
 
-	mode_cache = subtypesof(/datum/overmap_gamemode)
-
+	var/list/mode_cache = subtypesof(/datum/overmap_gamemode)
 	var/list/probabilities = config.Get(/datum/config_entry/keyed_list/omode_probability)
 	var/list/min_pop = config.Get(/datum/config_entry/keyed_list/omode_min_pop)
 	var/list/max_pop = config.Get(/datum/config_entry/keyed_list/omode_max_pop)
+	var/active_players = get_active_player_count()
 
 	for(var/M in mode_cache)
 		var/datum/overmap_gamemode/GM = M
@@ -80,10 +79,6 @@ SUBSYSTEM_DEF(overmap_mode)
 			var/W = text2path("/datum/overmap_gamemode/[S]")
 			mode_cache += W
 
-	for(var/mob/dead/new_player/P in GLOB.player_list) //Count the number of connected players
-		if(P.client)
-			player_check ++
-
 	for(var/M in mode_cache) //Check and remove any modes that we have insufficient players for the mode
 		var/datum/overmap_gamemode/GM = M
 		var/config_tag = initial(GM.config_tag)
@@ -99,41 +94,57 @@ SUBSYSTEM_DEF(overmap_mode)
 		else
 			max_players = initial(GM.max_players)
 
-		if(player_check < required_players)
+		if(active_players < required_players)
 			mode_cache -= M
-		else if((max_players > 0) && (player_check > max_players))
+		else if((max_players > 0) && (active_players > max_players))
 			mode_cache -= M
 
-	if(length(mode_cache))
-		var/list/mode_select = list()
-		if(forced_mode)
-			mode = new forced_mode
+	var/list/mode_select = list()
+	for(var/M in mode_cache)
+		var/datum/overmap_gamemode/GM = M
+		var/config_tag = initial(GM.config_tag)
+
+		var/selection_weight = 0
+		if(config_tag in probabilities)
+			selection_weight = probabilities[config_tag]
 		else
-			for(var/M in mode_cache)
-				var/datum/overmap_gamemode/GM = M
-				var/config_tag = initial(GM.config_tag)
+			selection_weight = initial(GM.selection_weight)
+		for(var/I = 0, I < selection_weight, I++) //Populate with weight number of instances
+			mode_select += M
 
-				var/selection_weight = 0
-				if(config_tag in probabilities)
-					selection_weight = probabilities[config_tag]
-				else
-					selection_weight = initial(GM.selection_weight)
-				for(var/I = 0, I < selection_weight, I++) //Populate with weight number of instances
-					mode_select += M
+	if(!length(mode_select))
+		throw EXCEPTION("Failed to select overmap_mode")
+	return new pick(mode_select)
 
-			if(length(mode_select))
-				var/mode_type = pick(mode_select)
-				mode = new mode_type
 
-	if(mode)
+/datum/controller/subsystem/overmap_mode/Initialize(start_timeofday)
+	//Retrieve the list of modes
+	//Check our map for any white/black lists
+	//Exclude or lock any modes due to maps
+	//Check the player numbers
+	//Exclude or lock any modes due to players
+	//Use probs to pick a mode from the trimmed pool
+	//Set starting systems for the player ships
+	//Load and set objectives
+
+	SSticker.OnRoundstart(CALLBACK(src, PROC_REF(on_roundstart)))
+	. = ..()
+
+///Run by SSticker during roundstart
+/datum/controller/subsystem/overmap_mode/proc/on_roundstart()
+	//Added to SSticker by running SSticker.OnRoundstart(CALLBACK(src, on_roundstart))
+	try
+		mode = select_mode()
 		message_admins("[mode.name] has been selected as the overmap gamemode")
 		log_game("[mode.name] has been selected as the overmap gamemode")
-	else
-		mode = new/datum/overmap_gamemode/patrol() //Holding that as the default for now - REPLACE ME LATER
-		message_admins("Error: mode section pool empty - defaulting to PATROL")
-		log_game("Error: mode section pool empty - defaulting to PATROL")
-
-	return ..()
+	catch(var/exception/exception)
+		//Only throw during testing, as not to mess up setup of a crucial sub system on production.
+		#ifdef TESTING
+		throw exception
+		#endif
+		mode = new fallback_mode
+		message_admins("Error: mode section pool empty - defaulting to [mode.name]")
+		log_game("Error: mode section pool empty - defaulting to [mode.name]")
 
 /datum/controller/subsystem/overmap_mode/proc/setup_overmap_mode()
 	mode_initialised = TRUE
@@ -203,57 +214,59 @@ SUBSYSTEM_DEF(overmap_mode)
 	threat_elevation = max(threat_elevation + value, 0)	//threat never goes below 0
 
 /datum/controller/subsystem/overmap_mode/fire()
-	if(SSticker.current_state == GAME_STATE_PLAYING) //Wait for the game to begin
-		if(world.time >= check_completion_timer) //Fire this automatically every ten minutes to prevent round stalling
-			if(world.time > TE_INITIAL_DELAY)
-				modify_threat_elevation(TE_THREAT_PER_HOUR / 6)	//Accurate enough... although update this if the completion timer interval gets changed :)
-			difficulty_calc() //Also do our difficulty check here
-			mode.check_completion()
-			check_completion_timer += 10 MINUTES
+	if(!SSticker.current_state == GAME_STATE_PLAYING) //Wait for the game to begin
+		return
+	if(world.time >= check_completion_timer) //Fire this automatically every ten minutes to prevent round stalling
+		if(world.time > TE_INITIAL_DELAY)
+			modify_threat_elevation(TE_THREAT_PER_HOUR / 6)	//Accurate enough... although update this if the completion timer interval gets changed :)
+		difficulty_calc() //Also do our difficulty check here
+		mode.check_completion()
+		check_completion_timer += 10 MINUTES
 
-		if(!objective_reminder_override)
-			if(world.time >= next_objective_reminder)
-				mode.check_completion()
-				if(objectives_completed || already_ended)
-					return
-				objective_reminder_stacks ++
-				next_objective_reminder = world.time + mode.objective_reminder_interval
-				if(!round_extended) //Normal Loop
-					switch(objective_reminder_stacks)
-						if(1) //something
-							priority_announce("[mode.reminder_one]", "[mode.reminder_origin]")
-							mode.consequence_one()
-						if(2) //something else
-							priority_announce("[mode.reminder_two]", "[mode.reminder_origin]")
-							mode.consequence_two()
-						if(3) //something else +
-							priority_announce("[mode.reminder_three]", "[mode.reminder_origin]")
-							mode.consequence_three()
-						if(4) //last chance
-							priority_announce("[mode.reminder_four]", "[mode.reminder_origin]")
-							mode.consequence_four()
-						if(5) //mission critical failure
-							priority_announce("[mode.reminder_five]", "[mode.reminder_origin]")
-							mode.consequence_five()
-						else // I don't know what happened but let's go around again
-							objective_reminder_stacks = 0
+	if(objective_reminder_override)
+		return
+	if(world.time >= next_objective_reminder)
+		mode.check_completion()
+		if(objectives_completed || already_ended)
+			return
+		objective_reminder_stacks ++
+		next_objective_reminder = world.time + mode.objective_reminder_interval
+		if(!round_extended) //Normal Loop
+			switch(objective_reminder_stacks)
+				if(1) //something
+					priority_announce("[mode.reminder_one]", "[mode.reminder_origin]")
+					mode.consequence_one()
+				if(2) //something else
+					priority_announce("[mode.reminder_two]", "[mode.reminder_origin]")
+					mode.consequence_two()
+				if(3) //something else +
+					priority_announce("[mode.reminder_three]", "[mode.reminder_origin]")
+					mode.consequence_three()
+				if(4) //last chance
+					priority_announce("[mode.reminder_four]", "[mode.reminder_origin]")
+					mode.consequence_four()
+				if(5) //mission critical failure
+					priority_announce("[mode.reminder_five]", "[mode.reminder_origin]")
+					mode.consequence_five()
+				else // I don't know what happened but let's go around again
+					objective_reminder_stacks = 0
+		else
+			var/obj/structure/overmap/OM = SSstar_system.find_main_overmap()
+			var/datum/star_system/S = SSstar_system.return_system
+			if(length(OM.current_system?.enemies_in_system))
+				if(objective_reminder_stacks == 3)
+					priority_announce("Auto-recall to [S.name] will occur once you are out of combat.", "[mode.reminder_origin]")
+				return // Don't send them home while there are enemies to kill
+			switch(objective_reminder_stacks) //Less Stacks Here, Prevent The Post-Round Stalling
+				if(1)
+					priority_announce("Auto-recall to [S.name] will occur in [(mode.objective_reminder_interval * 2) / 600] Minutes.", "[mode.reminder_origin]")
+
+				if(2)
+					priority_announce("Auto-recall to [S.name] will occur in [(mode.objective_reminder_interval * 1) / 600] Minutes.", "[mode.reminder_origin]")
+
 				else
-					var/obj/structure/overmap/OM = SSstar_system.find_main_overmap()
-					var/datum/star_system/S = SSstar_system.return_system
-					if(length(OM.current_system?.enemies_in_system))
-						if(objective_reminder_stacks == 3)
-							priority_announce("Auto-recall to [S.name] will occur once you are out of combat.", "[mode.reminder_origin]")
-						return // Don't send them home while there are enemies to kill
-					switch(objective_reminder_stacks) //Less Stacks Here, Prevent The Post-Round Stalling
-						if(1)
-							priority_announce("Auto-recall to [S.name] will occur in [(mode.objective_reminder_interval * 2) / 600] Minutes.", "[mode.reminder_origin]")
-
-						if(2)
-							priority_announce("Auto-recall to [S.name] will occur in [(mode.objective_reminder_interval * 1) / 600] Minutes.", "[mode.reminder_origin]")
-
-						else
-							priority_announce("Auto-recall to [S.name] activated, additional objective aborted.", "[mode.reminder_origin]")
-							mode.victory()
+					priority_announce("Auto-recall to [S.name] activated, additional objective aborted.", "[mode.reminder_origin]")
+					mode.victory()
 
 /datum/controller/subsystem/overmap_mode/proc/start_reminder()
 	next_objective_reminder = world.time + mode.objective_reminder_interval
