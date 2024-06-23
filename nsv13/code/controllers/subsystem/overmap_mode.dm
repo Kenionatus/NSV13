@@ -22,16 +22,13 @@ SUBSYSTEM_DEF(overmap_mode)
 	var/datum/overmap_gamemode/mode 				//!The assigned mode
 	var/datum/overmap_gamemode/forced_mode = null	//!Admin forced gamemode prior to initialization
 
-	var/objective_reminder_override = FALSE 		//!Are we currently using the reminder system?
-	var/last_objective_interaction = 0 				//!Last time the crew interacted with one of our objectives
-	var/next_objective_reminder = 0 				//!Next time we automatically remind the crew to proceed with objectives
-	var/objective_reminder_stacks = 0 				//!How many times has the crew been automatically reminded of objectives without any progress
+	var/timer
+	var/timer_running = FALSE
 	var/objective_resets_reminder = FALSE			//!Do we only reset the reminder when we complete an objective?
-	var/combat_resets_reminder = FALSE 				//!Does combat in the overmap reset the reminder?
-	var/combat_delays_reminder = FALSE 				//!Does combat in the overmap delay the reminder?
-	var/combat_delay_amount = 0 					//!How much the reminder is delayed by combat
+	var/combat_resets_timer = FALSE
+	var/combat_increases_timer = FALSE
+	var/combat_increase_amount = 0 MINUTES
 
-	var/announce_delay = 3 MINUTES					//!How long do we wait?
 	var/announced_objectives = FALSE 				//!Have we announced the objectives yet?
 	var/round_extended = FALSE 						//!Has the round already been extended already?
 	var/admin_override = FALSE						//!Stops the mission ending
