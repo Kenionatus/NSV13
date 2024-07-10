@@ -68,7 +68,8 @@
 	F.assemble(target)
 	SSovermap_mode.objective_reminder_stacks = 0 //Reset
 
-/datum/overmap_gamemode/proc/check_completion() //This gets called by checking the communication console/modcomp program + automatically once every 10 minutes
+///Checks objectives for completion, sets objectives_completed if appropriate and returns number of completed objectives
+/datum/overmap_gamemode/proc/check_completion()
 	if(SSovermap_mode.already_ended)
 		return
 	if(SSovermap_mode.objectives_completed)
