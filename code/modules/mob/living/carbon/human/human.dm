@@ -578,46 +578,46 @@
 				to_chat(src, "<span class='warning'>\The [S] pulls \the [hand] from your grip!</span>")
 	rad_act(current_size * 3)
 
-/mob/living/carbon/human/proc/do_cpr(mob/living/carbon/C)
-	CHECK_DNA_AND_SPECIES(C)
+/mob/living/carbon/human/proc/do_cpr(mob/living/carbon/target)
+	CHECK_DNA_AND_SPECIES(target)
 
-	if(C.stat == DEAD || (HAS_TRAIT(C, TRAIT_FAKEDEATH)))
-		to_chat(src, "<span class='warning'>[C.name] is dead!</span>")
+	if(target.stat == DEAD || (HAS_TRAIT(target, TRAIT_FAKEDEATH)))
+		to_chat(src, "<span class='warning'>[target.name] is dead!</span>")
 		return
 	if(is_mouth_covered())
 		to_chat(src, "<span class='warning'>Remove your mask first!</span>")
 		return 0
-	if(C.is_mouth_covered())
-		to_chat(src, "<span class='warning'>Remove [p_their()] mask first!</span>")
+	if(target.is_mouth_covered())
+		to_chat(src, "<span class='warning'>Remove [target.p_their()] mask first!</span>")
 		return 0
 
-	if(C.cpr_time < world.time + 30)
-		visible_message("<span class='notice'>[src] is trying to perform CPR on [C.name]!</span>", \
-						"<span class='notice'>You try to perform CPR on [C.name]... Hold still!</span>")
-		if(!do_mob(src, C))
-			to_chat(src, "<span class='warning'>You fail to perform CPR on [C]!</span>")
+	if(target.cpr_time < world.time + 30)
+		visible_message("<span class='notice'>[src] is trying to perform CPR on [target.name]!</span>", \
+						"<span class='notice'>You try to perform CPR on [target.name]... Hold still!</span>")
+		if(!do_mob(src, target))
+			to_chat(src, "<span class='warning'>You fail to perform CPR on [target]!</span>")
 			return 0
 
-		var/they_breathe = !HAS_TRAIT(C, TRAIT_NOBREATH)
-		var/they_lung = C.getorganslot(ORGAN_SLOT_LUNGS)
+		var/they_breathe = !HAS_TRAIT(target, TRAIT_NOBREATH)
+		var/they_lung = target.getorganslot(ORGAN_SLOT_LUNGS)
 
-		if(C.health > C.crit_threshold)
+		if(target.health > target.crit_threshold)
 			return
 
-		src.visible_message("[src] performs CPR on [C.name]!", "<span class='notice'>You perform CPR on [C.name].</span>")
+		src.visible_message("[src] performs CPR on [target.name]!", "<span class='notice'>You perform CPR on [target.name].</span>")
 		SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "perform_cpr", /datum/mood_event/perform_cpr)
-		C.cpr_time = world.time
-		log_combat(src, C, "CPRed")
+		target.cpr_time = world.time
+		log_combat(src, target, "CPRed")
 
 		if(they_breathe && they_lung)
-			var/suff = min(C.getOxyLoss(), 7)
-			C.adjustOxyLoss(-suff)
-			C.updatehealth()
-			to_chat(C, "<span class='unconscious'>You feel a breath of fresh air enter your lungs. It feels good.</span>")
+			var/suff = min(target.getOxyLoss(), 7)
+			target.adjustOxyLoss(-suff)
+			target.updatehealth()
+			to_chat(target, "<span class='unconscious'>You feel a breath of fresh air enter your lungs. It feels good.</span>")
 		else if(they_breathe && !they_lung)
-			to_chat(C, "<span class='unconscious'>You feel a breath of fresh air, but you don't feel any better.</span>")
+			to_chat(target, "<span class='unconscious'>You feel a breath of fresh air, but you don't feel any better.</span>")
 		else
-			to_chat(C, "<span class='unconscious'>You feel a breath of fresh air, which is a sensation you don't recognise.</span>")
+			to_chat(target, "<span class='unconscious'>You feel a breath of fresh air, which is a sensation you don't recognise.</span>")
 
 /mob/living/carbon/human/cuff_resist(obj/item/I)
 	if(dna && dna.check_mutation(HULK))
